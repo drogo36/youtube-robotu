@@ -133,15 +133,18 @@ Main headline: {story['title']}
 Related headlines from other outlets (use them to cross-check facts):
 {sources}
 
-Rules:
+Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches and comments worldwide):
 - Use ONLY facts present in these headlines. If something is a leak/rumor, say so clearly.
-- Script about {words} words (~{config.TARGET_SECONDS} seconds spoken). Spoken style, short punchy sentences, no emojis, no hashtags, no stage directions.
-- Structure: 1-sentence hook that creates curiosity -> the facts -> your own analysis ("what this means for players") -> a quick question to the viewer to drive comments -> "Follow {channel} for daily updates." (in {lang}).
-- Title: max 70 characters, curiosity + main keyword at the start, no clickbait lies, 1 emoji max. Add " #shorts" at the end.
-- Description: 2-3 sentences summary in {lang}, then a line "Sources: " listing outlet names, then 3-5 hashtags.
-- Tags: 10-15 relevant search tags.
-- headline: 2-5 word ALL CAPS on-screen banner text.
-- pexels_queries: 5 short ENGLISH stock-footage search terms that visually fit (e.g. "neon city night", "gaming setup", "miami beach aerial"). No brand names.
+- Script about {words} words (~{config.TARGET_SECONDS} seconds spoken). Very short punchy sentences (max 10 words). No emojis, no hashtags, no stage directions.
+- HOOK: the first 6 words must create instant curiosity or shock (a bold claim, a surprising number, or a question). Never start with "Hey guys", "Today", "In this video" or the channel name.
+- Pacing: a new fact or twist every 1-2 sentences. Use concrete numbers and comparisons people can feel ("more than double", "in just 24 hours").
+- Add one line of your own opinion/analysis ("Here's why this matters...") so the video is original commentary, not just news.
+- End with a short question that makes people comment, then a final sentence that loops naturally back to the hook (so the Short replays seamlessly). Do NOT add a long outro; at most "Follow for more." before the loop line.
+- Title: max 60 characters, written for a global audience, curiosity + main keyword first, honest (no fake claims), 1 emoji max. Add " #shorts" at the end.
+- Description: 2 sentences summary in {lang}, then a line "Sources: " listing outlet names, then 4-6 popular hashtags (e.g. #gaming #gta6 #ps5).
+- Tags: 12-15 high-search-volume tags people actually type.
+- headline: 2-4 word ALL CAPS on-screen banner that teases the story (curiosity, not a summary).
+- pexels_queries: 6 short ENGLISH stock-footage search terms with strong motion and visual energy (e.g. "neon city night drive", "gamer hands controller closeup", "crowd cheering stadium"). No brand names.
 
 Reply ONLY with JSON:
 {{"title": "...", "description": "...", "tags": ["..."], "headline": "...", "script": "...", "pexels_queries": ["..."]}}"""
