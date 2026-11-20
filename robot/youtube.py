@@ -20,10 +20,19 @@ SCOPES = "https://www.googleapis.com/auth/youtube.upload https://www.googleapis.
 UPLOAD_URL = "https://www.googleapis.com/upload/youtube/v3/videos"
 
 
+def _env(name):
+    """Gizli anahtarı okur; kopyalarken karışan boşluk, satır sonu ve 'Secret:' ön ekini temizler."""
+    v = os.environ.get(name, "").strip().strip('"').strip("'").strip()
+    for prefix in ("secret:", "name:"):
+        if v.lower().startswith(prefix):
+            v = v[len(prefix):].strip()
+    return v
+
+
 def _client():
     # Bulut (GitHub Actions): bilgiler gizli ortam değişkenlerinden gelir
-    if os.environ.get("YT_CLIENT_ID"):
-        return {"client_id": os.environ["YT_CLIENT_ID"], "client_secret": os.environ.get("YT_CLIENT_SECRET", ""),
+    if _env("YT_CLIENT_ID"):
+        return {"client_id": _env("YT_CLIENT_ID"), "client_secret": _env("YT_CLIENT_SECRET"),
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token"}
     if not config.CLIENT_SECRET_FILE.exists():
@@ -101,8 +110,8 @@ def login():
 
 
 def _token():
-    if os.environ.get("YT_REFRESH_TOKEN") and not config.TOKEN_FILE.exists():
-        config.TOKEN_FILE.write_text(json.dumps({"refresh_token": os.environ["YT_REFRESH_TOKEN"], "expires_at": 0}),
+    if _env("YT_REFRESH_TOKEN") and not config.TOKEN_FILE.exists():
+        config.TOKEN_FILE.write_text(json.dumps({"refresh_token": _env("YT_REFRESH_TOKEN"), "expires_at": 0}),
                                      encoding="utf-8")
     if not config.TOKEN_FILE.exists():
         raise SystemExit("YouTube girişi yapılmamış. Önce:  python3 main.py giris")
