@@ -163,16 +163,35 @@ def _wrap(draw, text, fnt, max_w):
     return lines
 
 
-def caption_png(text, path, size=82):
-    img = Image.new("RGBA", (W, 520), (0, 0, 0, 0))
+def caption_png(text, path, size=88, highlight=None):
+    """Altyazı görseli. highlight = o an söylenen kelimenin sırası (sarı + biraz büyük)."""
+    img = Image.new("RGBA", (W, 560), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    f = font(size)
-    lines = _wrap(d, text, f, 940)
-    line_h = int(size * 1.18)
-    y = (520 - line_h * len(lines)) // 2
+    words = text.upper().split()
+    f, fb = font(size), font(int(size * 1.12))
+    space = d.textlength(" ", font=f)
+    lines, cur, cur_w = [], [], 0
+    for i, w in enumerate(words):
+        ww = d.textlength(w, font=fb if i == highlight else f)
+        if cur and cur_w + space + ww > 960:
+            lines.append(cur)
+            cur, cur_w = [], 0
+        cur.append((i, w, ww))
+        cur_w += (space if len(cur) > 1 else 0) + ww
+    if cur:
+        lines.append(cur)
+    line_h = int(size * 1.25)
+    y = (560 - line_h * len(lines)) // 2
     for ln in lines:
-        x = (W - d.textlength(ln, font=f)) // 2
-        d.text((x, y), ln, font=f, fill=(255, 255, 255), stroke_width=8, stroke_fill=(0, 0, 0))
+        total = sum(ww for _, _, ww in ln) + space * (len(ln) - 1)
+        x = (W - total) / 2
+        for i, w, ww in ln:
+            hot = i == highlight
+            fnt = fb if hot else f
+            dy = -int(size * 0.06) if hot else 0
+            d.text((x, y + dy), w, font=fnt, fill=(255, 214, 0) if hot else (255, 255, 255),
+                   stroke_width=9, stroke_fill=(0, 0, 0))
+            x += ww + space
         y += line_h
     img.save(path)
     return path
@@ -189,7 +208,7 @@ def banner_png(headline, path, channel=""):
     tw = d.textlength(headline, font=f)
     pad_x, box_h = 44, size + 60
     x0 = (W - tw) // 2 - pad_x
-    y0 = 150
+    y0 = 120
     d.rounded_rectangle([x0, y0, x0 + tw + pad_x * 2, y0 + box_h], radius=26, fill=(225, 25, 45, 245))
     d.text(((W - tw) // 2, y0 + (box_h - size) // 2 - 8), headline, font=f, fill=(255, 255, 255))
     if channel:
@@ -201,25 +220,27 @@ def banner_png(headline, path, channel=""):
     return path
 
 
-def caption_chunks(script, duration, max_chars=24):
-    """Senaryoyu ekran altyazısı parçalarına böler ve süreyi karakter sayısına göre dağıtır."""
+def caption_chunks(script, duration, max_words=3):
+    """Senaryoyu 1-3 kelimelik parçalara böler; her kelimeye süre verir (karaoke için).
+    Dönüş: [(parça_metni, [(kelime_sırası, başlangıç, bitiş), ...]), ...]"""
     words = script.replace("\n", " ").split()
     chunks, cur = [], []
     for w in words:
-        if cur and len(" ".join(cur + [w])) > max_chars:
-            chunks.append(" ".join(cur))
-            cur = []
         cur.append(w)
-        if w.endswith((".", "!", "?")) or (w.endswith((",", ":", ";")) and len(" ".join(cur)) >= 12):
-            chunks.append(" ".join(cur))
+        if len(cur) >= max_words or w.endswith((".", "!", "?", ",", ":", ";")):
+            chunks.append(cur)
             cur = []
     if cur:
-        chunks.append(" ".join(cur))
-    total_chars = sum(len(c) + 3 for c in chunks)
-    t, timed = 0.15, []
-    usable = max(duration - 0.3, 1)
+        chunks.append(cur)
+    weight = lambda w: len(w) + 2 + (4 if w.endswith((".", "!", "?")) else 0)
+    total = sum(weight(w) for c in chunks for w in c)
+    usable = max(duration - 0.2, 1)
+    t, out = 0.05, []
     for c in chunks:
-        dur = usable * (len(c) + 3) / total_chars
-        timed.append((c, round(t, 2), round(t + dur, 2)))
-        t += dur
-    return timed
+        timings = []
+        for i, w in enumerate(c):
+            dur = usable * weight(w) / total
+            timings.append((i, round(t, 3), round(t + dur, 3)))
+            t += dur
+        out.append((" ".join(c), timings))
+    return out
