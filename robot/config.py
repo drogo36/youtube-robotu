@@ -59,7 +59,7 @@ VIDEOS_PER_DAY = max(1, min(_int("VIDEOS_PER_DAY", 3), 6))  # YouTube API kotasÄ
 ACTIVE_START_HOUR = _int("ACTIVE_START_HOUR", 10)
 ACTIVE_END_HOUR = _int("ACTIVE_END_HOUR", 23)
 PRIVACY = _get("PRIVACY", "public")  # public / unlisted / private
-TARGET_SECONDS = _int("TARGET_SECONDS", 50)
+TARGET_SECONDS = _int("TARGET_SECONDS", 32)
 VOICE = _get("VOICE", "")
 MUSIC_VOLUME = float(_get("MUSIC_VOLUME", "0.10") or 0.10)
 
