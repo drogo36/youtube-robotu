@@ -9,6 +9,15 @@ from . import config
 from .log import log
 
 W, H = 1080, 1920
+# Her videoda farklı renk teması (vurgu rengi, bant rengi) — kanal tekdüze görünmesin
+THEMES = [((255, 214, 0), (225, 25, 45)), ((0, 230, 255), (120, 30, 220)), ((120, 255, 80), (20, 20, 20)),
+          ((255, 120, 0), (10, 90, 200)), ((255, 70, 160), (25, 25, 60))]
+ACCENT, BANNER = THEMES[0]
+
+
+def set_theme(seed):
+    global ACCENT, BANNER
+    ACCENT, BANNER = random.Random(seed).choice(THEMES)
 FONT_CANDIDATES = [
     "/System/Library/Fonts/Supplemental/Arial Black.ttf",
     "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
@@ -189,7 +198,7 @@ def caption_png(text, path, size=88, highlight=None):
             hot = i == highlight
             fnt = fb if hot else f
             dy = -int(size * 0.06) if hot else 0
-            d.text((x, y + dy), w, font=fnt, fill=(255, 214, 0) if hot else (255, 255, 255),
+            d.text((x, y + dy), w, font=fnt, fill=ACCENT if hot else (255, 255, 255),
                    stroke_width=9, stroke_fill=(0, 0, 0))
             x += ww + space
         y += line_h
@@ -209,7 +218,7 @@ def banner_png(headline, path, channel=""):
     pad_x, box_h = 44, size + 60
     x0 = (W - tw) // 2 - pad_x
     y0 = 120
-    d.rounded_rectangle([x0, y0, x0 + tw + pad_x * 2, y0 + box_h], radius=26, fill=(225, 25, 45, 245))
+    d.rounded_rectangle([x0, y0, x0 + tw + pad_x * 2, y0 + box_h], radius=26, fill=BANNER + (245,))
     d.text(((W - tw) // 2, y0 + (box_h - size) // 2 - 8), headline, font=f, fill=(255, 255, 255))
     if channel:
         cf = font(40)
@@ -243,4 +252,38 @@ def caption_chunks(script, duration, max_words=3):
             timings.append((i, round(t, 3), round(t + dur, 3)))
             t += dur
         out.append((" ".join(c), timings))
+    return out
+
+
+# ---------------------------------------------------------------- yapay zekâ görselleri
+def ai_images(prompts, folder, limit=5):
+    """Pollinations.ai (ücretsiz, anahtarsız) ile her sahne için dikey yapay zekâ görseli üretir.
+    Liste[(yol, 'img')]. Hata olursa sessizce atlar; video stok kliplerle devam eder."""
+    from urllib.parse import quote
+    import time
+    out = []
+    for i, prm in enumerate(list(prompts)[:limit]):
+        prompt = (f"{prm}, cinematic, dramatic lighting, ultra detailed, vibrant colors, "
+                  f"vertical 9:16 composition, no text, no watermark, no logo")
+        url = (f"https://image.pollinations.ai/prompt/{quote(prompt)}"
+               f"?width=1080&height=1920&model=flux&nologo=true&seed={random.randint(1, 999999)}")
+        path = folder / f"ai_{i:02d}.jpg"
+        for attempt in range(2):
+            try:
+                r = requests.get(url, timeout=120)
+                if r.status_code == 200 and r.headers.get("content-type", "").startswith("image"):
+                    path.write_bytes(r.content)
+                    im = Image.open(path).convert("RGB")
+                    w, h = im.size
+                    im = im.crop((0, 0, w, int(h * 0.94)))  # alttaki olası filigranı kes
+                    im = im.resize((1188, 2112), Image.LANCZOS)
+                    im.save(path, quality=93)
+                    out.append((path, "img"))
+                    break
+                log.warning(f"Yapay zekâ görseli alınamadı (HTTP {r.status_code})")
+            except Exception as e:
+                log.warning(f"Yapay zekâ görseli hatası: {e}")
+            time.sleep(16)
+        time.sleep(16)  # anahtarsız kullanımda 15 sn'de 1 istek sınırı
+    log.info(f"Yapay zekâ: {len(out)} görsel üretildi")
     return out

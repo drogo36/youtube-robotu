@@ -50,8 +50,11 @@ LANGUAGE = _get("LANGUAGE", "en").lower()  # en / tr
 CHANNEL_NAME = _get("CHANNEL_NAME", "")
 WATCH_KEYWORDS = [k.strip() for k in _get(
     "WATCH_KEYWORDS",
-    "GTA 6,Grand Theft Auto VI,Rockstar Games,PlayStation,Nintendo Switch 2,Xbox,Steam new game",
+    "GTA 6,Minecraft,Fortnite,Roblox,Call of Duty,Pokemon,Nintendo Switch 2,PlayStation 5,Xbox,"
+    "Steam new game,EA Sports FC,Elden Ring,Marvel game,anime game,esports,free game,"
+    "iPhone,Samsung Galaxy,ChatGPT,AI robot,NVIDIA,Tesla,SpaceX,viral video game,game trailer",
 ).split(",") if k.strip()]
+KEYWORDS_PER_RUN = _int("KEYWORDS_PER_RUN", 9)  # her turda havuzdan rastgele bu kadar konu taranır
 USE_GOOGLE_TRENDS = _get("USE_GOOGLE_TRENDS", "1") == "1"
 TRENDS_GEO = _get("TRENDS_GEO", "US")
 
@@ -61,6 +64,7 @@ ACTIVE_END_HOUR = _int("ACTIVE_END_HOUR", 23)
 PRIVACY = _get("PRIVACY", "public")  # public / unlisted / private
 TARGET_SECONDS = _int("TARGET_SECONDS", 32)
 VOICE = _get("VOICE", "")
+AI_IMAGES = _get("AI_IMAGES", "1") == "1"  # Pollinations.ai ile yapay zekâ sahne görselleri (ücretsiz)
 MUSIC_VOLUME = float(_get("MUSIC_VOLUME", "0.10") or 0.10)
 
 CLIENT_SECRET_FILE = ROOT / "client_secret.json"

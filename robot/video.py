@@ -41,13 +41,18 @@ def _background(clips, duration, work, seed):
     order = clips[:]
     while t < duration:
         path, clip_len = order[i % len(order)]
+        is_img = clip_len == "img"
+        if is_img:
+            clip_len = 99.0
         seg_len = min(random.uniform(2.4, 3.4), clip_len - 0.2, duration - t + 0.1)
         if seg_len < 1.0:
             seg_len = min(clip_len - 0.1, duration - t + 0.1)
         start = round(random.uniform(0, max(0.0, clip_len - seg_len - 0.2)), 2)
         seg = work / f"seg_{i:02d}.mp4"
         flash = "" if i == 0 else ",fade=t=in:st=0:d=0.18:color=white"
-        _ff(["-ss", start, "-t", f"{seg_len:.2f}", "-i", path, "-an",
+        src = (["-loop", "1", "-framerate", "30", "-t", f"{seg_len:.2f}", "-i", path] if is_img
+               else ["-ss", start, "-t", f"{seg_len:.2f}", "-i", path])
+        _ff(src + ["-an",
              "-vf", _motion(i, seg_len) + ",setsar=1,format=yuv420p" + flash,
              "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", seg])
         segs.append(seg)
@@ -67,6 +72,8 @@ def _background(clips, duration, work, seed):
 
 def render(script_data, voice_path, voice_seconds, clips, work, out_path):
     duration = voice_seconds + 0.8
+    visuals.set_theme(script_data["title"])
+    bar_hex = "0x%02X%02X%02X" % visuals.ACCENT
     bg = _background(clips, duration, work, script_data["title"])
     banner = visuals.banner_png(script_data["headline"].upper()[:40], work / "bant.png", config.CHANNEL_NAME)
     chunks = visuals.caption_chunks(script_data["script"], voice_seconds)
@@ -89,13 +96,13 @@ def render(script_data, voice_path, voice_seconds, clips, work, out_path):
 
     D = f"{duration:.2f}"
     f = [f"[0:v]setpts=N/(30*TB),drawbox=x=0:y=0:w=iw:h=ih:color=black@0.30:t=fill[v0]",
-         f"color=c=0xFFD400:s=1080x16:r=30[bar]",
+         f"color=c={bar_hex}:s=1080x16:r=30[bar]",
          f"[v0][bar]overlay=x='-1080+1080*t/{D}':y=1904:shortest=1[vb]",   # ilerleme çubuğu
          f"[vb][{img_start}:v]overlay=x=0:y='if(lt(t,0.35),-420+420*t/0.35,0)'[v1]"]   # kayan başlık bandı
     last = "v1"
     for n, (idx, a, b) in enumerate(overlays):
         nxt = f"c{n}"
-        f.append(f"[{last}][{idx}:v]overlay=0:1120:enable='between(t,{a},{b})'[{nxt}]")
+        f.append(f"[{last}][{idx}:v]overlay=0:1120:enable='gte(t,{a})*lt(t,{b})'[{nxt}]")
         last = nxt
     if has_music:
         f.append(f"[1:a]volume=1.0[va];[2:a]volume={config.MUSIC_VOLUME},"

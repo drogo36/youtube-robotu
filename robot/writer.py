@@ -107,7 +107,8 @@ Rising Google searches right now (boost stories that match these): {', '.join(tr
 Videos we already published this week (do NOT repeat the same story):
 {recent}
 
-Prefer: big franchises (GTA 6 first), official announcements, release dates, trailers, leaks with big buzz, price news.
+Prefer: stories with GLOBAL appeal that people in many countries would stop scrolling for (huge franchises, viral moments, shocking numbers, surprising tech, free stuff, big release dates, trailers, leaks with big buzz).
+VARIETY RULE: our recent videos are listed above. Do NOT pick the same game/franchise/company as our last 3 videos unless it is truly massive breaking news. Rotate between games, consoles, phones, AI and tech so the channel never feels repetitive.
 Avoid: duplicates of what we published, minor/boring news, anything not gaming/tech.
 
 Reply ONLY with JSON: {{"index": <number>, "topic": "<short search phrase for this story>", "reason": "<one sentence>"}}
@@ -122,7 +123,19 @@ If nothing is good enough, reply {{"index": -1}}."""
     return chosen
 
 
+FORMATS = [
+    ("breaking", "BREAKING NEWS style: urgent, fast, the single biggest fact first."),
+    ("3things", "'3 THINGS you need to know' style: number them clearly (Number one..., Number two..., Number three...)."),
+    ("didyouknow", "'You won't believe this' style: lead with the most surprising fact, then reveal context step by step like a mini story."),
+    ("versus", "VERSUS / comparison style: compare it to something famous people already know (older game, rival product, past record)."),
+    ("hottake", "HOT TAKE / prediction style: state a bold but reasonable opinion early, back it with the facts, invite people to disagree."),
+]
+
+
 def write_video(story, related):
+    import random
+    fmt_name, fmt_rule = random.choice(FORMATS)
+    log.info(f"Video tarzı: {fmt_name}")
     lang = LANG_NAME.get(config.LANGUAGE, "English")
     words = int(config.TARGET_SECONDS * (2.6 if config.LANGUAGE == "en" else 2.1))
     sources = "\n".join(f"- [{a['source']}] {a['title']}" for a in [story] + related)
@@ -133,6 +146,8 @@ Main headline: {story['title']}
 Related headlines from other outlets (use them to cross-check facts):
 {sources}
 
+Video format for this one: {fmt_rule}
+
 Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches and comments worldwide):
 - Use ONLY facts present in these headlines. If something is a leak/rumor, say so clearly.
 - Script about {words} words (~{config.TARGET_SECONDS} seconds spoken). Very short punchy sentences (max 10 words). No emojis, no hashtags, no stage directions.
@@ -140,19 +155,22 @@ Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches a
 - Pacing: a new fact or twist every 1-2 sentences. Use concrete numbers and comparisons people can feel ("more than double", "in just 24 hours").
 - Add one line of your own opinion/analysis ("Here's why this matters...") so the video is original commentary, not just news.
 - End with a short question that makes people comment, then a final sentence that loops naturally back to the hook (so the Short replays seamlessly). Do NOT add a long outro; at most "Follow for more." before the loop line.
-- Title: max 60 characters, written for a global audience, curiosity + main keyword first, honest (no fake claims), 1 emoji max. Add " #shorts" at the end.
-- Description: 2 sentences summary in {lang}, then a line "Sources: " listing outlet names, then 4-6 popular hashtags (e.g. #gaming #gta6 #ps5).
-- Tags: 12-15 high-search-volume tags people actually type.
+- Title: max 60 characters before the hashtags, written for a global audience, curiosity + main keyword first, honest (no fake claims), 1 emoji max. End the title with 2 relevant hashtags plus #shorts (e.g. " #gta6 #gaming #shorts").
+- Description: 2 sentences summary in {lang}, then a line "Sources: " listing outlet names, then a line with 10-12 popular, relevant hashtags (mix of broad ones like #gaming #shorts #viral #fyp #gamer and specific ones for this story). Never more than 12 hashtags.
+- Tags: 15 high-search-volume tags people actually type (broad + specific, include common misspellings/short forms like "gta vi").
 - headline: 2-4 word ALL CAPS on-screen banner that teases the story (curiosity, not a summary).
 - pexels_queries: 6 short ENGLISH stock-footage search terms with strong motion and visual energy (e.g. "neon city night drive", "gamer hands controller closeup", "crowd cheering stadium"). No brand names.
+- image_prompts: 5 vivid ENGLISH prompts for an AI image generator, one per key moment of the script, in story order. Each describes a dramatic, eye-catching scene (subject, setting, action, mood, camera angle). NEVER name real people, brands, game titles or existing characters; describe original generic scenes instead (e.g. "neon-lit Miami-style beach city at sunset, sports car drifting, aerial shot").
 
 Reply ONLY with JSON:
-{{"title": "...", "description": "...", "tags": ["..."], "headline": "...", "script": "...", "pexels_queries": ["..."]}}"""
+{{"title": "...", "description": "...", "tags": ["..."], "headline": "...", "script": "...", "pexels_queries": ["..."], "image_prompts": ["..."]}}"""
     data = _json(ask_claude(prompt, 2500, SYSTEM))
     for key in ("title", "description", "script", "headline"):
         if not str(data.get(key, "")).strip():
             raise ValueError(f"Claude senaryosunda '{key}' alanı boş")
     data["title"] = data["title"].strip()[:100]
+    data["format"] = fmt_name
     data["tags"] = [str(t)[:60] for t in data.get("tags", [])][:15]
     data["pexels_queries"] = data.get("pexels_queries") or ["city night", "gaming"]
+    data["image_prompts"] = [str(x) for x in (data.get("image_prompts") or [])][:6]
     return data

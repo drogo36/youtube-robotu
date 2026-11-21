@@ -139,7 +139,21 @@ def channel_name():
 
 
 # ------------------------------------------------------------------ yükleme
+def _safe_tags(tags, limit=480):
+    """YouTube etiketlerin toplamını 500 karakterle sınırlar; aşarsa yükleme hata verir."""
+    out, total = [], 0
+    for t in tags:
+        t = str(t).replace("<", "").replace(">", "").replace(",", " ").strip()
+        cost = len(t) + (2 if " " in t else 0) + 1
+        if not t or total + cost > limit:
+            continue
+        out.append(t)
+        total += cost
+    return out
+
+
 def upload(video_path, title, description, tags, privacy=None):
+    tags = _safe_tags(tags)
     privacy = privacy or config.PRIVACY
     meta = {
         "snippet": {"title": title[:100], "description": description[:4900], "tags": tags,

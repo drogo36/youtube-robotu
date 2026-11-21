@@ -64,7 +64,11 @@ def google_trends():
 def collect():
     """Daha önce işlenmemiş haber adaylarını döndürür."""
     candidates, seen_links = [], set()
-    for kw in config.WATCH_KEYWORDS:
+    import random
+    pool = list(config.WATCH_KEYWORDS)
+    first, rest = pool[:1], pool[1:]          # GTA 6 her turda bakılır, diğerleri dönüşümlü
+    random.shuffle(rest)
+    for kw in first + rest[:max(config.KEYWORDS_PER_RUN - 1, 1)]:
         time.sleep(3)  # Google'ı yormamak için aramalar arasında bekle
         for item in google_news(kw)[:8]:
             if item["link"] in seen_links or db.is_seen(item["link"]):

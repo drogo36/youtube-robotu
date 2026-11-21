@@ -40,6 +40,15 @@ def make_one(upload=True):
     try:
         voice_path, secs = voice.synthesize(data["script"], work / "ses.mp3")
         clips = visuals.stock_clips(data["pexels_queries"], secs + 1, work)
+        if config.AI_IMAGES and data.get("image_prompts"):
+            images = visuals.ai_images(data["image_prompts"], work)
+            mixed = []  # yapay zekâ görseli ve stok video sırayla: görsel, klip, görsel, klip...
+            for k in range(max(len(images), len(clips))):
+                if k < len(images):
+                    mixed.append(images[k])
+                if k < len(clips):
+                    mixed.append(clips[k])
+            clips = mixed
         out = config.OUTPUT / f"{stamp}_{_slug(data['title'])}.mp4"
         video.render(data, voice_path, secs, clips, work, out)
         out.with_suffix(".json").write_text(json.dumps({**data, "source": story}, ensure_ascii=False, indent=2),
