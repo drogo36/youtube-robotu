@@ -153,17 +153,19 @@ Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches a
 - Script about {words} words (~{config.TARGET_SECONDS} seconds spoken). Very short punchy sentences (max 10 words). No emojis, no hashtags, no stage directions.
 - HOOK: the first 6 words must create instant curiosity or shock (a bold claim, a surprising number, or a question). Never start with "Hey guys", "Today", "In this video" or the channel name.
 - Pacing: a new fact or twist every 1-2 sentences. Use concrete numbers and comparisons people can feel ("more than double", "in just 24 hours").
-- Add one line of your own opinion/analysis ("Here's why this matters...") so the video is original commentary, not just news.
+- ORIGINALITY (very important, YouTube demonetizes generic mass-produced videos): add real analysis a fan would not get from the headline alone: why it matters for players, what it compares to, what is likely next. Include exactly one line that starts with "Respawn verdict:" giving our honest, specific opinion. Never pad, never repeat the headline in other words.
 - End with a short question that makes people comment, then a final sentence that loops naturally back to the hook (so the Short replays seamlessly). Do NOT add a long outro; at most "Follow for more." before the loop line.
 - Title: max 60 characters before the hashtags, written for a global audience, curiosity + main keyword first, honest (no fake claims), 1 emoji max. End the title with 2 relevant hashtags plus #shorts (e.g. " #gta6 #gaming #shorts").
 - Description: 2 sentences summary in {lang}, then a line "Sources: " listing outlet names, then a line with 10-12 popular, relevant hashtags (mix of broad ones like #gaming #shorts #viral #fyp #gamer and specific ones for this story). Never more than 12 hashtags.
 - Tags: 15 high-search-volume tags people actually type (broad + specific, include common misspellings/short forms like "gta vi").
 - headline: 2-4 word ALL CAPS on-screen banner that teases the story (curiosity, not a summary).
 - pexels_queries: 6 short ENGLISH stock-footage search terms with strong motion and visual energy (e.g. "neon city night drive", "gamer hands controller closeup", "crowd cheering stadium"). No brand names.
+- amazon_query: if the story is about something people can BUY (a console, game, phone, accessory, a deal or price drop), a short Amazon search phrase for it (e.g. "Nintendo Switch 2 console"); otherwise "".
+- tiktok_caption: a punchy TikTok caption (max 150 characters) ending with 4-5 TikTok hashtags (e.g. #gaming #gamingnews #fyp).
 - image_prompts: 5 vivid ENGLISH prompts for an AI image generator, one per key moment of the script, in story order. Each describes a dramatic, eye-catching scene (subject, setting, action, mood, camera angle). NEVER name real people, brands, game titles or existing characters; describe original generic scenes instead (e.g. "neon-lit Miami-style beach city at sunset, sports car drifting, aerial shot").
 
 Reply ONLY with JSON:
-{{"title": "...", "description": "...", "tags": ["..."], "headline": "...", "script": "...", "pexels_queries": ["..."], "image_prompts": ["..."]}}"""
+{{"title": "...", "description": "...", "tags": ["..."], "headline": "...", "script": "...", "pexels_queries": ["..."], "image_prompts": ["..."], "amazon_query": "", "tiktok_caption": "..."}}"""
     data = _json(ask_claude(prompt, 2500, SYSTEM))
     for key in ("title", "description", "script", "headline"):
         if not str(data.get(key, "")).strip():

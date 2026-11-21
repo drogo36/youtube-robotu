@@ -55,9 +55,17 @@ def make_one(upload=True):
                                             encoding="utf-8")
         db.mark_seen([story["link"]] + [a["link"] for a in related])
 
+        from urllib.parse import quote_plus
+        q = str(data.get("amazon_query") or "").strip()
+        if config.AMAZON_TAG and q:   # ürün/indirim haberlerinde ortaklık linki = YouTube şartlarını beklemeden gelir
+            data["description"] = (f"🛒 Check the price: https://www.amazon.com/s?k={quote_plus(q)}&tag={config.AMAZON_TAG}\n"
+                                   f"(As an Amazon Associate we earn from qualifying purchases.)\n\n" + data["description"])
+
         vid = None
         if upload:
             vid = youtube_upload(out, data)
+        from . import telegram
+        telegram.send_video(out, (data.get("tiktok_caption") or data["title"]).strip())
         db.add_video(story["topic"], story["link"], data["title"], out, vid, "yuklendi" if vid else "uretildi")
         return out
     finally:
