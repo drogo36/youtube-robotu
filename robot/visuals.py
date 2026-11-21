@@ -266,7 +266,7 @@ def ai_images(prompts, folder, limit=5):
         prompt = (f"{prm}, cinematic, dramatic lighting, ultra detailed, vibrant colors, "
                   f"vertical 9:16 composition, no text, no watermark, no logo")
         url = (f"https://image.pollinations.ai/prompt/{quote(prompt)}"
-               f"?width=1080&height=1920&model=flux&nologo=true&seed={random.randint(1, 999999)}")
+               f"?width=1080&height=1920&model=flux&seed={random.randint(1, 999999)}")
         path = folder / f"ai_{i:02d}.jpg"
         for attempt in range(2):
             try:
@@ -283,7 +283,7 @@ def ai_images(prompts, folder, limit=5):
                 log.warning(f"Yapay zekâ görseli alınamadı (HTTP {r.status_code})")
             except Exception as e:
                 log.warning(f"Yapay zekâ görseli hatası: {e}")
-            time.sleep(16)
-        time.sleep(16)  # anahtarsız kullanımda 15 sn'de 1 istek sınırı
+            time.sleep(25)
+        time.sleep(20)  # anahtarsız kullanımda 15 sn'de 1 istek sınırı
     log.info(f"Yapay zekâ: {len(out)} görsel üretildi")
     return out
