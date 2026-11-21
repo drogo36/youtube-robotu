@@ -108,6 +108,7 @@ Videos we already published this week (do NOT repeat the same story):
 {recent}
 
 Prefer: stories with GLOBAL appeal that people in many countries would stop scrolling for (huge franchises, viral moments, shocking numbers, surprising tech, free stuff, big release dates, trailers, leaks with big buzz).
+MONEY RULE: we earn Amazon affiliate commission when a video is about something viewers can BUY (consoles, games, phones, accessories, deals, price drops). Late November to mid December is Black Friday / Cyber Monday / holiday shopping season: in this period strongly prefer real deal and price-drop stories about popular products (but never invent a deal; only use what the headline says). At least every second video should be a buyable-product story when one is available.
 VARIETY RULE: our recent videos are listed above. Do NOT pick the same game/franchise/company as our last 3 videos unless it is truly massive breaking news. Rotate between games, consoles, phones, AI and tech so the channel never feels repetitive.
 Avoid: duplicates of what we published, minor/boring news, anything not gaming/tech.
 
@@ -160,6 +161,7 @@ Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches a
 - Tags: 15 high-search-volume tags people actually type (broad + specific, include common misspellings/short forms like "gta vi").
 - headline: 2-4 word ALL CAPS on-screen banner that teases the story (curiosity, not a summary).
 - pexels_queries: 6 short ENGLISH stock-footage search terms with strong motion and visual energy (e.g. "neon city night drive", "gamer hands controller closeup", "crowd cheering stadium"). No brand names.
+- If the story is about something people can buy, the line right before the loop line must be: "Deal link is on our channel page." (Shorts description links are not clickable, the channel page link is.)
 - amazon_query: if the story is about something people can BUY (a console, game, phone, accessory, a deal or price drop), a short Amazon search phrase for it (e.g. "Nintendo Switch 2 console"); otherwise "".
 - tiktok_caption: a punchy TikTok caption (max 150 characters) ending with 4-5 TikTok hashtags (e.g. #gaming #gamingnews #fyp).
 - image_prompts: 5 vivid ENGLISH prompts for an AI image generator, one per key moment of the script, in story order. Each describes a dramatic, eye-catching scene (subject, setting, action, mood, camera angle). NEVER name real people, brands, game titles or existing characters; describe original generic scenes instead (e.g. "neon-lit Miami-style beach city at sunset, sports car drifting, aerial shot").

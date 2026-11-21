@@ -64,7 +64,8 @@ def make_one(upload=True):
         vid = None
         if upload:
             vid = youtube_upload(out, data)
-        from . import telegram
+        from . import deals, telegram
+        deals.add(q, data["title"], vid)   # kanal profilindeki tıklanabilir "fırsatlar" sayfası
         telegram.send_video(out, (data.get("tiktok_caption") or data["title"]).strip())
         db.add_video(story["topic"], story["link"], data["title"], out, vid, "yuklendi" if vid else "uretildi")
         return out

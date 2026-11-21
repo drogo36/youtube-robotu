@@ -54,6 +54,12 @@ WATCH_KEYWORDS = [k.strip() for k in _get(
     "Steam new game,EA Sports FC,Elden Ring,Marvel game,anime game,esports,free game,"
     "iPhone,Samsung Galaxy,ChatGPT,AI robot,NVIDIA,Tesla,SpaceX,viral video game,game trailer",
 ).split(",") if k.strip()]
+DEAL_KEYWORDS = [k.strip() for k in _get(
+    "DEAL_KEYWORDS",
+    "Black Friday gaming deals,PS5 deal,Nintendo Switch 2 deal,Xbox deal,video game price drop,"
+    "gaming headset deal,iPhone deal,Samsung Galaxy deal,gaming monitor deal,Steam Deck deal",
+).split(",") if k.strip()]
+DEALS_PER_RUN = _int("DEALS_PER_RUN", 3)  # her turda bakılacak indirim araması (Amazon linki = komisyon)
 KEYWORDS_PER_RUN = _int("KEYWORDS_PER_RUN", 9)  # her turda havuzdan rastgele bu kadar konu taranır
 USE_GOOGLE_TRENDS = _get("USE_GOOGLE_TRENDS", "1") == "1"
 TRENDS_GEO = _get("TRENDS_GEO", "US")
