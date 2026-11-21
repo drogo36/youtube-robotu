@@ -287,3 +287,22 @@ def ai_images(prompts, folder, limit=5):
         time.sleep(20)  # anahtarsız kullanımda 15 sn'de 1 istek sınırı
     log.info(f"Yapay zekâ: {len(out)} görsel üretildi")
     return out
+
+
+DEALS_URL_TEXT = "drogo36.github.io/youtube-robotu"
+
+
+def deal_png(path):
+    """Ürün videolarında ekranda duran kart: izleyici adresi yazıp fırsat sayfasına girebilsin."""
+    img = Image.new("RGBA", (W, 260), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    f1, f2 = font(54), font(46)
+    t1, t2 = "🛒 DEAL LINK ON OUR CHANNEL", DEALS_URL_TEXT
+    t1 = t1.replace("🛒 ", "")
+    w = max(d.textlength(t1, font=f1), d.textlength(t2, font=f2)) + 80
+    x0 = (W - w) / 2
+    d.rounded_rectangle([x0, 20, x0 + w, 230], radius=28, fill=(255, 212, 0, 240))
+    d.text(((W - d.textlength(t1, font=f1)) / 2, 45), t1, font=f1, fill=(15, 15, 15))
+    d.text(((W - d.textlength(t2, font=f2)) / 2, 130), t2, font=f2, fill=(15, 15, 15))
+    img.save(path)
+    return path

@@ -94,6 +94,11 @@ def render(script_data, voice_path, voice_seconds, clips, work, out_path):
             n_img += 1
             overlays.append((img_start + n_img, a, b))
 
+    deal_idx = None
+    if config.AMAZON_TAG and str(script_data.get("amazon_query") or "").strip():
+        inputs += ["-i", visuals.deal_png(work / "firsat.png")]   # ekranda fırsat sayfası adresi
+        deal_idx = img_start + n_img + 1
+
     D = f"{duration:.2f}"
     f = [f"[0:v]setpts=N/(30*TB),drawbox=x=0:y=0:w=iw:h=ih:color=black@0.30:t=fill[v0]",
          f"color=c={bar_hex}:s=1080x16:r=30[bar]",
@@ -104,6 +109,9 @@ def render(script_data, voice_path, voice_seconds, clips, work, out_path):
         nxt = f"c{n}"
         f.append(f"[{last}][{idx}:v]overlay=0:1120:enable='gte(t,{a})*lt(t,{b})'[{nxt}]")
         last = nxt
+    if deal_idx is not None:   # videonun ikinci yarısında, başlık bandının altında sabit kart
+        f.append(f"[{last}][{deal_idx}:v]overlay=x=0:y=600:enable='gte(t,{duration * 0.45:.2f})'[deal]")
+        last = "deal"
     if has_music:
         f.append(f"[1:a]volume=1.0[va];[2:a]volume={config.MUSIC_VOLUME},"
                  f"afade=t=out:st={max(duration - 1.5, 0):.2f}:d=1.5[ma];"
