@@ -11,6 +11,7 @@ Komutlar (Terminal'de proje klasöründeyken):
   python3 main.py durum     -> son videoların listesi
 """
 import random
+import os
 import sys
 import time
 from datetime import datetime, timedelta
@@ -122,6 +123,10 @@ def main():
         from robot import pipeline
         if db.uploads_today() >= config.VIDEOS_PER_DAY:
             print("Bugünün video kotası dolu, atlanıyor.")
+            return
+        # Yedek zamanlayıcılar: son yüklemeden bu yana 3 saat geçmediyse bu tur atlanır (elle çalıştırma hariç)
+        if os.environ.get("FORCE") != "1" and db.hours_since_last_upload() < 3:
+            print("Son videodan bu yana 3 saat geçmedi, yedek tur atlanıyor.")
             return
         for attempt in range(2):
             try:
