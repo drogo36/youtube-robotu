@@ -6,6 +6,10 @@ on:
     - cron: "10 9 * * *"
     - cron: "30 13 * * *"
     - cron: "50 17 * * *"
+    # Yedek turlar: GitHub bazen turu atlıyor; asıl tur çalıştıysa bunlar kendiliğinden boş geçer
+    - cron: "40 10 * * *"
+    - cron: "5 15 * * *"
+    - cron: "20 19 * * *"
   workflow_dispatch: {}   # Actions sekmesinden elle "Run workflow" ile de çalıştırılabilir
 
 permissions:
@@ -46,6 +50,8 @@ jobs:
 
       - name: Video üret ve yükle
         run: python main.py bulut
+        env:
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
 
       - name: Hafızayı kaydet (aynı haberi tekrar yapmamak için)
         if: always()
