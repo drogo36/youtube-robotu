@@ -121,7 +121,8 @@ def main():
     elif cmd == "bulut":
         # GitHub Actions her tetiklendiğinde 1 video üretip yükler (günlük sınırı aşmadan)
         from robot import pipeline
-        if db.uploads_today() >= config.VIDEOS_PER_DAY:
+        limit = 5 if os.environ.get("FORCE") == "1" else config.VIDEOS_PER_DAY  # elle çalıştırmada 2 ek video hakkı
+        if db.uploads_today() >= limit:
             print("Bugünün video kotası dolu, atlanıyor.")
             return
         # Yedek zamanlayıcılar: son yüklemeden bu yana 3 saat geçmediyse bu tur atlanır (elle çalıştırma hariç)
