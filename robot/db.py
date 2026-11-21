@@ -41,6 +41,14 @@ def uploads_today():
                          (today + "%",)).fetchone()[0]
 
 
+def hours_since_last_upload():
+    with _conn() as c:
+        row = c.execute("SELECT MAX(created_at) FROM videos WHERE status='yuklendi'").fetchone()
+    if not row or not row[0]:
+        return 999.0
+    return (datetime.now() - datetime.fromisoformat(row[0])).total_seconds() / 3600
+
+
 def recent_titles(days=7):
     since = (datetime.now() - timedelta(days=days)).isoformat()
     with _conn() as c:
