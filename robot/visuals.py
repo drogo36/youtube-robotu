@@ -198,6 +198,9 @@ def caption_png(text, path, size=88, highlight=None):
             hot = i == highlight
             fnt = fb if hot else f
             dy = -int(size * 0.06) if hot else 0
+            if hot:   # söylenen kelimenin arkasında renkli kutu (daha canlı, daha okunur)
+                d.rounded_rectangle([x - 16, y + dy - 6, x + ww + 16, y + dy + int(size * 1.2)], radius=22,
+                                    fill=BANNER + (255,))
             d.text((x, y + dy), w, font=fnt, fill=ACCENT if hot else (255, 255, 255),
                    stroke_width=9, stroke_fill=(0, 0, 0))
             x += ww + space

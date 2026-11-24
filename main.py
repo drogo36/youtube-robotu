@@ -118,6 +118,13 @@ def main():
             sys.exit("Yapay zekâ anahtarı yok. .env dosyasına GEMINI_API_KEY yaz.")
         out = pipeline.make_one(upload=(cmd == "tek"))
         print(f"\n🎬 Video: {out}" if out else "\nBu tur video üretilmedi (loglara bak).")
+    elif cmd == "uzun":
+        # Haftalık uzun video (yatay, ~9 dk). Açıklamadaki Amazon linkleri tıklanabilir.
+        from robot import longform
+        out = longform.make_weekly(upload=True)
+        print(f"\n🎬 Uzun video: {out}" if out else "\nUzun video üretilmedi (loglara bak).")
+        if not out:
+            sys.exit(1)
     elif cmd == "bulut":
         # GitHub Actions her tetiklendiğinde 1 video üretip yükler (günlük sınırı aşmadan)
         from robot import pipeline

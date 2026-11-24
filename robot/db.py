@@ -37,7 +37,7 @@ def add_video(topic, source_url, title, file_path, youtube_id, status):
 def uploads_today():
     today = datetime.now().strftime("%Y-%m-%d")
     with _conn() as c:
-        return c.execute("SELECT COUNT(*) FROM videos WHERE status='yuklendi' AND created_at LIKE ?",
+        return c.execute("SELECT COUNT(*) FROM videos WHERE status='yuklendi' AND topic!='haftalik' AND created_at LIKE ?",
                          (today + "%",)).fetchone()[0]
 
 

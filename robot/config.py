@@ -73,6 +73,7 @@ VOICE = _get("VOICE", "")
 TELEGRAM_BOT_TOKEN = _get("TELEGRAM_BOT_TOKEN")   # TikTok için videoları telefona yollar (isteğe bağlı)
 TELEGRAM_CHAT_ID = _get("TELEGRAM_CHAT_ID")
 AMAZON_TAG = _get("AMAZON_TAG")                   # Amazon ortaklık (affiliate) kodu; boşsa link eklenmez
+LONG_MINUTES = _int("LONG_MINUTES", 9)   # haftalık uzun video hedef süresi (dakika)
 AI_IMAGES = _get("AI_IMAGES", "1") == "1"  # Pollinations.ai ile yapay zekâ sahne görselleri (ücretsiz)
 MUSIC_VOLUME = float(_get("MUSIC_VOLUME", "0.10") or 0.10)
 

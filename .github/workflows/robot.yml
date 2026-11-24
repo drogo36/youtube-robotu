@@ -11,7 +11,15 @@ on:
     - cron: "40 16 * * *"
     - cron: "5 21 * * *"
     - cron: "20 1 * * *"
-  workflow_dispatch: {}   # Actions sekmesinden elle "Run workflow" ile de çalıştırılabilir
+    # Haftalık UZUN video: her pazar Türkiye saatiyle 15:00
+    - cron: "0 12 * * 0"
+  workflow_dispatch:   # Actions sekmesinden elle "Run workflow" ile de çalıştırılabilir
+    inputs:
+      mode:
+        description: "kisa = Shorts, uzun = haftalık uzun video"
+        type: choice
+        options: [kisa, uzun]
+        default: kisa
 
 permissions:
   contents: write
@@ -23,7 +31,7 @@ concurrency:
 jobs:
   video:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 75
     env:
       TZ: Europe/Istanbul
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -53,7 +61,12 @@ jobs:
           pip install -q -r requirements.txt
 
       - name: Video üret ve yükle
-        run: python main.py bulut
+        run: |
+          if [ "${{ github.event.schedule }}" = "0 12 * * 0" ] || [ "${{ inputs.mode }}" = "uzun" ]; then
+            python main.py uzun
+          else
+            python main.py bulut
+          fi
         env:
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
 

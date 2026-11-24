@@ -180,7 +180,7 @@ def upload(video_path, title, description, tags, privacy=None):
             if up.status_code in (200, 201):
                 vid = up.json()["id"]
                 status = up.json().get("status", {}).get("privacyStatus", privacy)
-                log.info(f"YouTube'a yüklendi: https://youtube.com/shorts/{vid}  (görünürlük: {status})")
+                log.info(f"YouTube'a yüklendi: https://youtu.be/{vid}  (görünürlük: {status})")
                 if privacy == "public" and status != "public":
                     log.warning("Video 'özel' kaldı: Google Cloud projen henüz YouTube denetiminden geçmemiş. "
                                 "Rehberdeki 'Denetim başvurusu' adımına bak.")
@@ -191,3 +191,22 @@ def upload(video_path, title, description, tags, privacy=None):
             log.warning(f"Yükleme denemesi {attempt + 1} başarısız: {e} — {wait} sn sonra tekrar")
             time.sleep(wait)
     raise RuntimeError("Video 5 denemede yüklenemedi")
+
+
+def set_thumbnail(video_id, image_path):
+    """Uzun videoya özel kapak resmi. Kanal telefonla doğrulanmamışsa YouTube reddeder; o zaman sessizce geçer."""
+    if not video_id:
+        return False
+    try:
+        with open(image_path, "rb") as fh:
+            r = requests.post("https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
+                              params={"videoId": video_id, "uploadType": "media"},
+                              headers={"Authorization": f"Bearer {_token()}", "Content-Type": "image/jpeg"},
+                              data=fh.read(), timeout=120)
+        if r.status_code == 200:
+            log.info("Kapak resmi yüklendi")
+            return True
+        log.warning(f"Kapak resmi yüklenemedi ({r.status_code}): {r.text[:200]}")
+    except Exception as e:
+        log.warning(f"Kapak resmi hatası: {e}")
+    return False

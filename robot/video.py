@@ -26,7 +26,7 @@ def _motion(i, seg_len):
         zoom = f"scale=w='2*trunc(1188*(1.12-0.12*t/{L:.2f})/2)':h=-2:eval=frame,crop=1080:1920"
     else:            # yana kay
         zoom = f"crop=1080:1920:x='(iw-1080)*t/{L:.2f}':y='(ih-1920)/2'"
-    return base + "," + zoom
+    return base + "," + zoom + ",eq=saturation=1.45:contrast=1.10:brightness=0.02"   # canlı renkler
 
 
 def _background(clips, duration, work, seed):
@@ -100,7 +100,7 @@ def render(script_data, voice_path, voice_seconds, clips, work, out_path):
         deal_idx = img_start + n_img + 1
 
     D = f"{duration:.2f}"
-    f = [f"[0:v]setpts=N/(30*TB),drawbox=x=0:y=0:w=iw:h=ih:color=black@0.30:t=fill[v0]",
+    f = [f"[0:v]setpts=N/(30*TB),drawbox=x=0:y=0:w=iw:h=ih:color=black@0.10:t=fill[v0]",
          f"color=c={bar_hex}:s=1080x16:r=30[bar]",
          f"[v0][bar]overlay=x='-1080+1080*t/{D}':y=1904:shortest=1[vb]",   # ilerleme çubuğu
          f"[vb][{img_start}:v]overlay=x=0:y='if(lt(t,0.35),-420+420*t/0.35,0)'[v1]"]   # kayan başlık bandı
