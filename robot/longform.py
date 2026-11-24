@@ -18,12 +18,13 @@ PALETTE = [((255, 214, 0), (225, 25, 45)), ((0, 230, 255), (120, 30, 220)), ((25
 
 
 # ------------------------------------------------------------------ senaryo
-def write_long(stories):
+def write_long(stories, task=""):
     listing = "\n".join(f"- [{s['source']}] {s['title']}" for s in stories[:40])
     words = int(config.LONG_MINUTES * 150)
     prompt = f"""Write a YouTube long-form video (about {config.LONG_MINUTES} minutes, ~{words} words of narration in English)
 for a gaming & tech news channel: "This Week in Gaming & Tech".
 
+{("OWNER'S ASSIGNMENT (top priority, may be in Turkish; write the video in English): " + task) if task else ""}
 Headlines from this week:
 {listing}
 
@@ -226,8 +227,12 @@ def _ts(sec):
 
 
 # ------------------------------------------------------------------ ana akış
-def make_weekly(upload=True):
-    stories = []
+def make_weekly(upload=True, task=""):
+    stories, task_stories = [], []
+    if task:
+        from . import office
+        office.task_received(task)
+        task_stories = trends.google_news(task[:80], max_age_hours=24 * 7)
     for kw in list(config.WATCH_KEYWORDS)[:14] + list(config.DEAL_KEYWORDS)[:4]:
         stories += trends.google_news(kw, max_age_hours=24 * 7)
     seen, uniq = set(), []
@@ -237,10 +242,11 @@ def make_weekly(upload=True):
             seen.add(k)
             uniq.append(s)
     random.shuffle(uniq)
+    uniq = task_stories + uniq
     if len(uniq) < 6:
         log.info("Uzun video için yeterli haber yok")
         return None
-    data = write_long(uniq)
+    data = write_long(uniq, task)
     log.info(f"Uzun video: {data['title']} ({len(data['chapters'])} bölüm)")
     stamp = datetime.now().strftime("%Y%m%d_%H%M")
     work = config.WORK / f"uzun_{stamp}"
@@ -276,6 +282,9 @@ def make_weekly(upload=True):
             vid = youtube.upload(final, data["title"][:100], desc, data.get("tags", []))
             youtube.set_thumbnail(vid, thumb)
         db.add_video("haftalik", "", data["title"], final, vid, "yuklendi" if vid else "uretildi")
+        if vid and task:
+            from . import office
+            office.task_done(task, data["title"], vid)
         log.info(f"Haftalık uzun video tamam: {t / 60:.1f} dk")
         return final
     finally:

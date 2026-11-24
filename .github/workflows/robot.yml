@@ -13,6 +13,8 @@ on:
     - cron: "20 1 * * *"
     # Haftalık UZUN video: her pazar Türkiye saatiyle 15:00
     - cron: "0 12 * * 0"
+  issues:              # Plazadaki "Görev ver" kutusu -> GitHub'da "Görev:" başlıklı kayıt açar -> ekip başlar
+    types: [opened]
   workflow_dispatch:   # Actions sekmesinden elle "Run workflow" ile de çalıştırılabilir
     inputs:
       mode:
@@ -23,6 +25,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: youtube-robotu
@@ -30,6 +33,8 @@ concurrency:
 
 jobs:
   video:
+    # Görevleri SADECE kanal sahibi (drogo36) verebilir; başkasının açtığı kayıtlar yok sayılır
+    if: github.event_name != 'issues' || (github.event.issue.user.login == 'drogo36' && startsWith(github.event.issue.title, 'Görev'))
     runs-on: ubuntu-latest
     timeout-minutes: 75
     env:
@@ -62,13 +67,24 @@ jobs:
 
       - name: Video üret ve yükle
         run: |
-          if [ "${{ github.event.schedule }}" = "0 12 * * 0" ] || [ "${{ inputs.mode }}" = "uzun" ]; then
+          if [ "${{ github.event.schedule }}" = "0 12 * * 0" ] || [ "${{ inputs.mode }}" = "uzun" ] || echo "$TASK" | grep -qi "uzun"; then
             python main.py uzun
           else
             python main.py bulut
           fi
         env:
-          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
+          FORCE: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'issues') && '1' || '0' }}
+          TASK: ${{ github.event.issue.body || github.event.issue.title }}
+
+      - name: Görevi yanıtla
+        if: always() && github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUM: ${{ github.event.issue.number }}
+        run: |
+          MSG=$(cat veri/son_gorev.txt 2>/dev/null || echo "Ekip görevi tamamlayamadı, ayrıntılar Actions kayıtlarında.")
+          gh issue comment "$NUM" --body "$MSG"
+          gh issue close "$NUM"
 
       - name: Hafızayı kaydet (aynı haberi tekrar yapmamak için)
         if: always()

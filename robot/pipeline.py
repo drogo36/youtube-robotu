@@ -20,18 +20,22 @@ def _cleanup_outputs(keep=30):
         old.with_suffix(".json").unlink(missing_ok=True)
 
 
-def make_one(upload=True):
+def make_one(upload=True, task=""):
     candidates, trending = trends.collect()
+    if task:   # sahibinin plazadan verdiği görev: önce o konudaki haberler
+        office.task_received(task)
+        extra = trends.google_news(task[:80], max_age_hours=24 * 7)
+        candidates = extra + [c for c in candidates if c["link"] not in {e["link"] for e in extra}]
     if not candidates:
         log.info("Yeni haber yok, bu tur atlanıyor")
         return None
-    story = writer.choose_topic(candidates, trending)
+    story = writer.choose_topic(candidates, trending, task=task)
     if not story:
         db.mark_seen([c["link"] for c in candidates])
         log.info("Claude yeterince iyi bir konu bulamadı, bu tur atlanıyor")
         return None
     related = [a for a in trends.articles_for_topic(story["topic"]) if a["link"] != story["link"]]
-    data = writer.write_video(story, related)
+    data = writer.write_video(story, related, task=task)
     data = office.qa_review(story, data)   # Yayın Kurulu: puanla, zayıfsa yeniden yazdır
     log.info(f"Başlık: {data['title']}")
 
@@ -71,6 +75,8 @@ def make_one(upload=True):
         db.add_video(story["topic"], story["link"], data["title"], out, vid, "yuklendi" if vid else "uretildi")
         if vid:
             office.record_video(data, vid, story)
+            if task:
+                office.task_done(task, data["title"], vid)
         return out
     finally:
         shutil.rmtree(work, ignore_errors=True)

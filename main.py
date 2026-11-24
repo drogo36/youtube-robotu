@@ -121,7 +121,7 @@ def main():
     elif cmd == "uzun":
         # Haftalık uzun video (yatay, ~9 dk). Açıklamadaki Amazon linkleri tıklanabilir.
         from robot import longform
-        out = longform.make_weekly(upload=True)
+        out = longform.make_weekly(upload=True, task=os.environ.get("TASK", "").strip())
         print(f"\n🎬 Uzun video: {out}" if out else "\nUzun video üretilmedi (loglara bak).")
         if not out:
             sys.exit(1)
@@ -142,7 +142,7 @@ def main():
             return
         for attempt in range(2):
             try:
-                if pipeline.make_one(upload=True):
+                if pipeline.make_one(upload=True, task=os.environ.get("TASK", "").strip()):
                     return
                 print("Uygun yeni haber yok.")
                 return

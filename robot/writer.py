@@ -92,7 +92,7 @@ SYSTEM = ("You are the head writer of a fast, trustworthy gaming & tech news Sho
           "Every video must add original value: context, analysis, what it means for players.")
 
 
-def choose_topic(candidates, trending):
+def choose_topic(candidates, trending, task=""):
     if not candidates:
         return None
     listing = "\n".join(f"{i}. [{c['source']}] {c['title']} ({c['published'][:16]})"
@@ -100,6 +100,9 @@ def choose_topic(candidates, trending):
     recent = "\n".join(f"- {t}" for t in db.recent_titles()) or "- (none)"
     from . import office
     brief = office.strategy_brief()
+    if task:
+        brief += (f"\nTHE CHANNEL OWNER GAVE THIS ASSIGNMENT (top priority, may be in Turkish): {task}\n"
+                  "Pick the story that best fulfils it. Only return -1 if nothing at all is related.\n")
     prompt = f"""{brief}
 Pick the ONE story that will get the most views as a YouTube Short right now for a gaming/tech audience.
 
@@ -137,7 +140,7 @@ FORMATS = [
 ]
 
 
-def write_video(story, related):
+def write_video(story, related, task=""):
     import random
     from . import office
     pref = [f for f in FORMATS if f[0] in office.preferred_formats()]
@@ -156,6 +159,7 @@ Related headlines from other outlets (use them to cross-check facts):
 
 Video format for this one: {fmt_rule}
 {office.strategy_brief()}
+{("Channel owner's assignment for this video (follow it; it may be in Turkish, but write the video in " + lang + "): " + task) if task else ""}
 
 Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches and comments worldwide):
 - Use ONLY facts present in these headlines. If something is a leak/rumor, say so clearly.

@@ -22,6 +22,11 @@
   #feed ul{margin:6px 0 0;padding-left:16px}
   #feed li{margin:3px 0;font-size:12.5px}
   #feed li span{color:#7a8396}
+  #task{flex:0 0 min(380px,100%);pointer-events:auto}
+  #task textarea{width:100%;margin:8px 0;border:1px solid #d7dbe3;border-radius:10px;padding:8px;font:inherit;font-size:13px;resize:none}
+  #task .btn{border:0;cursor:pointer;width:100%}
+  #task .hint{font-size:11px;color:#7a8396;margin-top:6px}
+  @media (max-width:700px){#feed{flex-direction:column;align-items:stretch}#feed > .pill:first-child{max-height:14vh}#task{flex:none}}
   #panel{position:fixed;top:70px;right:12px;width:min(340px,92vw);z-index:6;display:none}
   #panel h3{margin:0 0 4px;font-size:16px}
   #panel .dept{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#7a1fd6;font-weight:700}
@@ -48,7 +53,11 @@
 <div id="zoom"><button id="zin">+</button><button id="zout">−</button></div>
 <div id="feed">
   <div class="pill"><b>🗂️ Ofiste şu an</b><ul id="log"></ul></div>
-  <a class="btn" href="https://github.com/drogo36/youtube-robotu/actions/workflows/robot.yml" target="_blank">▶ Görev ver</a>
+  <div class="pill" id="task"><b>📝 Ekibe görev ver</b>
+    <textarea id="taskText" rows="2" placeholder="Örn: Bu haftaki PS5 indirimleri hakkında video yap · ya da: uzun video: haftanın GTA 6 haberleri"></textarea>
+    <button class="btn" id="send">Gönder →</button>
+    <div class="hint">GitHub'da açılan sayfada yeşil <b>Create</b> butonuna bas. Ekip hemen başlar, video ~10 dk'da kanalda.</div>
+  </div>
 </div>
 
 <script>
@@ -239,6 +248,12 @@ stage.style.touchAction="none";
 if(innerWidth<700){const w=1000,h=w*innerHeight/innerWidth;vb={x:80-w/2,y:380-h/2,w,h};setVB();}
 stage.addEventListener("wheel",e=>{e.preventDefault();const f=e.deltaY>0?1.1:0.9;const cx=vb.x+vb.w/2,cy=vb.y+vb.h/2;vb.w*=f;vb.h*=f;vb.x=cx-vb.w/2;vb.y=cy-vb.h/2;setVB();},{passive:false});
 
+document.getElementById("send").onclick=()=>{
+  const t=document.getElementById("taskText").value.trim(); if(!t){document.getElementById("taskText").focus();return;}
+  const url="https://github.com/drogo36/youtube-robotu/issues/new?title="+encodeURIComponent("Görev: "+t.slice(0,70))+"&body="+encodeURIComponent(t);
+  window.open(url,"_blank");
+  say("Kanal Müdürü","Görevi aldım, ekibi topluyorum! 💪");
+};
 draw(); load().then(()=>{tick(); setInterval(tick,2600);}); setInterval(load,60000);
 </script>
 </body>

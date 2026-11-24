@@ -259,3 +259,21 @@ td{{padding:7px 6px;border-top:1px solid #262b36}}a{{color:#9fb4ff}}ul{{margin:0
 <div class="card"><h2>🗂️ Ofis kayıtları</h2><ul class="log">{logs}</ul></div>
 <div class="card"><h2>👥 Ekip (20 kişi)</h2><div class="team">{team_html}</div></div>
 </main></body></html>""", encoding="utf-8")
+
+
+# ------------------------------------------------------------------ Sahibin görevleri
+def task_received(task):
+    st = load()
+    note(st, "Kanal Müdürü", f"Patrondan yeni görev geldi: {task[:200]} — ekip çalışmaya başladı")
+    save(st)
+    (config.DATA / "son_gorev.txt").write_text("Görev alındı, ekip çalışıyor...", encoding="utf-8")
+
+
+def task_done(task, title, vid):
+    st = load()
+    note(st, "Yayın Yönetmeni", f"Patronun görevi tamamlandı: {title}")
+    save(st)
+    render_board(st)
+    (config.DATA / "son_gorev.txt").write_text(
+        f"✅ Görev tamamlandı!\n\n**{title}**\nhttps://youtu.be/{vid}\n\nPlaza: https://drogo36.github.io/youtube-robotu/plaza.html",
+        encoding="utf-8")
