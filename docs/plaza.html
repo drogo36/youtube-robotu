@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Respawn Report Plaza — Canlı Ajan Ofisi</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#eceef2;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1d2230;overflow:hidden}
+  #top{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;gap:10px;z-index:5;pointer-events:none}
+  .pill{pointer-events:auto;background:#fff;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.08);padding:10px 14px;font-size:13px}
+  .pill b{font-size:15px}
+  #stage{position:absolute;inset:0;cursor:grab}
+  #stage:active{cursor:grabbing}
+  svg{width:100%;height:100%;display:block}
+  .tag{font-size:11px;font-weight:600}
+  #feed{position:fixed;left:12px;right:12px;bottom:12px;z-index:5;display:flex;gap:10px;align-items:flex-end;pointer-events:none}
+  #feed .pill{flex:1;max-height:24vh;overflow:auto}
+  #zoom{position:fixed;right:12px;top:50%;transform:translateY(-50%);z-index:5;display:flex;flex-direction:column;gap:8px}
+  #zoom button{width:42px;height:42px;border-radius:12px;border:0;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.1);font-size:22px;font-weight:700;color:#1d2230}
+  @media (max-width:700px){.pill{font-size:12px;padding:8px 10px}#feed .pill{max-height:20vh}#feed li{font-size:11.5px}}
+  #feed ul{margin:6px 0 0;padding-left:16px}
+  #feed li{margin:3px 0;font-size:12.5px}
+  #feed li span{color:#7a8396}
+  #panel{position:fixed;top:70px;right:12px;width:min(340px,92vw);z-index:6;display:none}
+  #panel h3{margin:0 0 4px;font-size:16px}
+  #panel .dept{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#7a1fd6;font-weight:700}
+  #panel p{margin:6px 0;font-size:13px;color:#3a4152}
+  #panel ul{margin:6px 0 0;padding-left:16px;font-size:12.5px}
+  .btn{pointer-events:auto;display:inline-block;background:#3b5bfd;color:#fff;text-decoration:none;border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px}
+  .close{float:right;cursor:pointer;color:#7a8396}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+  @keyframes type{0%,100%{transform:translateY(0)}50%{transform:translateY(1.5px)}}
+  .person{animation:bob 2.4s ease-in-out infinite}
+  .hands{animation:type .35s linear infinite}
+  .bubble{transition:opacity .4s}
+  .glow{animation:glow 1.4s ease-in-out infinite}
+  @keyframes glow{0%,100%{opacity:.35}50%{opacity:.85}}
+</style>
+</head>
+<body>
+<div id="top">
+  <div class="pill">🏢 <b>Respawn Report Plaza</b><br><span id="stamp">yükleniyor…</span></div>
+  <div class="pill" id="kpi">—</div>
+</div>
+<div id="stage"><svg id="svg" viewBox="-780 -200 1720 1120" preserveAspectRatio="xMidYMid meet"></svg></div>
+<div class="pill" id="panel"></div>
+<div id="zoom"><button id="zin">+</button><button id="zout">−</button></div>
+<div id="feed">
+  <div class="pill"><b>🗂️ Ofiste şu an</b><ul id="log"></ul></div>
+  <a class="btn" href="https://github.com/drogo36/youtube-robotu/actions/workflows/robot.yml" target="_blank">▶ Görev ver</a>
+</div>
+
+<script>
+const TEAM = [
+  ["Yönetim","Kanal Müdürü"],["Yönetim","Yayın Yönetmeni"],
+  ["Araştırma","Trend Avcısı"],["Araştırma","İndirim Avcısı"],["Araştırma","Doğrulama Editörü"],["Araştırma","Küresel Gündem Uzmanı"],
+  ["İçerik","Baş Senarist"],["İçerik","Kanca (Hook) Uzmanı"],["İçerik","Yorumcu"],["İçerik","Uzun Video Yapımcısı"],
+  ["Kalite","Yayın Kurulu Başkanı"],["Kalite","Politika & Telif Denetçisi"],
+  ["Görsel","Görsel Yönetmen"],["Görsel","Kurgu Editörü"],["Görsel","Kapak Tasarımcısı"],
+  ["Büyüme","SEO Uzmanı"],["Büyüme","Yayın Saati Planlayıcısı"],["Büyüme","Veri Analisti"],
+  ["Gelir","Ortaklık (Amazon) Sorumlusu"],["Gelir","Fırsatlar Sayfası Editörü"]
+];
+const DUTY = {
+ "Kanal Müdürü":"Her gün izlenmeleri inceler, stratejiyi ve son kararı verir.",
+ "Yayın Yönetmeni":"Videonun yayına çıkmasına onay verir.",
+ "Trend Avcısı":"Google News ve Google Trends'i tarar.",
+ "İndirim Avcısı":"Black Friday ve fiyat düşüşlerini yakalar.",
+ "Doğrulama Editörü":"Bilgileri birden fazla kaynakla karşılaştırır.",
+ "Küresel Gündem Uzmanı":"Dünya çapında ilgi çekecek haberi seçer.",
+ "Baş Senarist":"Kısa ve uzun video metinlerini yazar.",
+ "Kanca (Hook) Uzmanı":"İlk 3 saniyeyi yazar.",
+ "Yorumcu":"'Respawn verdict' ile özgün görüş ekler.",
+ "Uzun Video Yapımcısı":"Haftalık uzun videoyu kurgular.",
+ "Yayın Kurulu Başkanı":"Senaryoyu 10 üzerinden puanlar, zayıfsa geri çevirir.",
+ "Politika & Telif Denetçisi":"YouTube kurallarına ve telife uygunluğu kontrol eder.",
+ "Görsel Yönetmen":"Stok video ve yapay zekâ sahnelerini seçer.",
+ "Kurgu Editörü":"Kamera hareketi, geçiş, altyazı ve renkleri uygular.",
+ "Kapak Tasarımcısı":"Uzun video kapaklarını hazırlar.",
+ "SEO Uzmanı":"Başlık, etiket ve hashtag'leri seçer.",
+ "Yayın Saati Planlayıcısı":"Videoları ABD'nin en aktif saatlerine yerleştirir.",
+ "Veri Analisti":"Her videonun izlenmesini toplar.",
+ "Ortaklık (Amazon) Sorumlusu":"Ürün videolarına komisyon linki ekler.",
+ "Fırsatlar Sayfası Editörü":"Fırsatlar sayfasını günceller."
+};
+// Oda yerleşimi (ızgara birimi), renkler
+const ROOMS = [
+  {d:"Araştırma", x:0,  y:0,  w:6, h:4, c:"#2b6cff"},
+  {d:"İçerik",    x:7,  y:0,  w:6, h:4, c:"#e1192d"},
+  {d:"Yönetim",   x:15, y:0,  w:5, h:4, c:"#7a1fd6"},
+  {d:"Kalite",    x:0,  y:6,  w:5, h:4, c:"#ff8a00"},
+  {d:"Görsel",    x:7,  y:6,  w:6, h:4, c:"#0aa66b"},
+  {d:"Büyüme",    x:0,  y:12, w:6, h:4, c:"#00a3c4"},
+  {d:"Gelir",     x:8,  y:12, w:5, h:4, c:"#d4a400"}
+];
+const U = 46;                          // bir ızgara biriminin piksel boyutu
+const iso = (x,y,z=0)=>[(x-y)*U*0.87, (x+y)*U*0.5 - z*U];
+const P = pts=>pts.map(p=>iso(...p).join(",")).join(" ");
+const NS="http://www.w3.org/2000/svg";
+const svg=document.getElementById("svg");
+const el=(t,a={},parent=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);parent.appendChild(e);return e};
+const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let STATE={log:[],strategy:{},videos:[]}, people={};
+
+function box(x,y,w,h,z,top,left,right,parent){
+  el("polygon",{points:P([[x,y+h,0],[x+w,y+h,0],[x+w,y+h,z],[x,y+h,z]]),fill:left},parent);
+  el("polygon",{points:P([[x+w,y,0],[x+w,y+h,0],[x+w,y+h,z],[x+w,y,z]]),fill:right},parent);
+  el("polygon",{points:P([[x,y,z],[x+w,y,z],[x+w,y+h,z],[x,y+h,z]]),fill:top},parent);
+}
+
+function draw(){
+  svg.innerHTML="";
+  const W=21,H=17;
+  // zemin + dış duvarlar
+  el("polygon",{points:P([[-1,-1],[W,-1],[W,H],[-1,H]]),fill:"#d9a35b"});
+  for(let i=-1;i<W;i+=1) el("line",{x1:iso(i,-1)[0],y1:iso(i,-1)[1],x2:iso(i,H)[0],y2:iso(i,H)[1],stroke:"#cf9a52","stroke-width":1});
+  el("polygon",{points:P([[-1,-1,0],[W,-1,0],[W,-1,2.2],[-1,-1,2.2]]),fill:"#f4f5f7",stroke:"#c9ccd3"});
+  el("polygon",{points:P([[-1,-1,0],[-1,H,0],[-1,H,2.2],[-1,-1,2.2]]),fill:"#e6e8ec",stroke:"#c9ccd3"});
+  for(let i=0;i<W;i+=3){ el("polygon",{points:P([[i+.3,-1,.7],[i+2.3,-1,.7],[i+2.3,-1,1.9],[i+.3,-1,1.9]]),fill:"#bfe3ff",opacity:.8}); }
+  // logo duvarı
+  const lg=iso(9.5,-1,1.4); el("rect",{x:lg[0]-70,y:lg[1]-24,width:140,height:38,rx:6,fill:"#7b3b1f"});
+  el("text",{x:lg[0],y:lg[1],"text-anchor":"middle",fill:"#fff","font-size":15,"font-weight":800}).textContent="RESPAWN REPORT";
+  // dinlenme alanı (kahve köşesi)
+  box(16,8,3,1.2,.5,"#6b4a3a","#5a3d30","#4d342a"); box(16,11,1,1,.45,"#2d2f36","#24262c","#1d1f24");
+  box(18,11,1,1,.45,"#2d2f36","#24262c","#1d1f24"); el("ellipse",{cx:iso(17.5,12)[0],cy:iso(17.5,12)[1],rx:60,ry:30,fill:"#e9d6b6",opacity:.7});
+  const cf=iso(17.4,8.6,.8); el("text",{x:cf[0],y:cf[1],"text-anchor":"middle","font-size":12,fill:"#3a2a22","font-weight":700}).textContent="☕ Kahve";
+
+  people={};
+  const order=[...ROOMS].sort((a,b)=>(a.x+a.y)-(b.x+b.y));
+  for(const r of order) room(r);
+}
+
+function room(r){
+  const g=el("g");
+  const members=TEAM.filter(t=>t[0]===r.d).map(t=>t[1]);
+  // cam bölmeler (arka duvarlar önce)
+  el("polygon",{points:P([[r.x,r.y,0],[r.x+r.w,r.y,0],[r.x+r.w,r.y,1.4],[r.x,r.y,1.4]]),fill:"#ffffff",opacity:.45,stroke:"#9aa3b2"},g);
+  el("polygon",{points:P([[r.x,r.y,0],[r.x,r.y+r.h,0],[r.x,r.y+r.h,1.4],[r.x,r.y,1.4]]),fill:"#ffffff",opacity:.35,stroke:"#9aa3b2"},g);
+  el("polygon",{points:P([[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w,r.y+r.h],[r.x,r.y+r.h]]),fill:"#e9b46b"},g);
+  // masalar + kişiler
+  members.forEach((name,i)=>{
+    const cols=Math.min(members.length,3), row=Math.floor(i/cols), col=i%cols;
+    const dx=r.x+0.7+col*(r.w-1.2)/Math.max(cols,1)+0.2, dy=r.y+0.8+row*1.7;
+    box(dx,dy,1.2,0.6,0.55,"#fafafa","#d9dce2","#c7cbd3",g);                    // masa
+    const m=iso(dx+0.6,dy+0.15,0.56); el("rect",{x:m[0]-10,y:m[1]-22,width:20,height:14,rx:2,fill:"#1d2230"},g); // ekran
+    el("rect",{x:m[0]-8,y:m[1]-20,width:16,height:10,fill:r.c,opacity:.55,class:"glow"},g);
+    const p=iso(dx+0.6,dy+0.95,0);
+    const pg=el("g",{class:"person",style:`animation-delay:${(i*0.37)%2}s;cursor:pointer`},g);
+    el("ellipse",{cx:p[0],cy:p[1]+2,rx:12,ry:5,fill:"#000",opacity:.15},pg);
+    el("rect",{x:p[0]-9,y:p[1]-30,width:18,height:26,rx:8,fill:r.c},pg);             // gövde
+    el("circle",{cx:p[0],cy:p[1]-38,r:8.5,fill:["#f1c27d","#e0ac69","#c68642","#8d5524","#ffdbac"][i%5]},pg); // baş
+    el("path",{d:`M${p[0]-8.5} ${p[1]-40} q8.5 -11 17 0`,fill:["#2b1b0e","#111","#6b3e1f","#d8b26e"][i%4]},pg);
+    const hands=el("g",{class:"hands"},pg);
+    el("circle",{cx:p[0]-7,cy:p[1]-12,r:3,fill:"#f1c27d"},hands); el("circle",{cx:p[0]+7,cy:p[1]-12,r:3,fill:"#f1c27d"},hands);
+    // isim etiketi
+    const lx=p[0], ly=p[1]-58, tw=name.length*6.1+18;
+    const tagG=el("g",{style:"cursor:pointer"},g);
+    el("rect",{x:lx-tw/2,y:ly-11,width:tw,height:18,rx:9,fill:"#fff",stroke:"#d7dbe3"},tagG);
+    el("circle",{cx:lx-tw/2+9,cy:ly-2,r:3.5,fill:r.c},tagG);
+    el("text",{x:lx+4,y:ly+2,"text-anchor":"middle",class:"tag",fill:"#1d2230"},tagG).textContent=name;
+    const bub=el("g",{class:"bubble",opacity:0},g);
+    people[name]={x:p[0],y:p[1],bub,color:r.c,dept:r.d};
+    [pg,tagG].forEach(n=>n.addEventListener("click",()=>openPanel(name)));
+  });
+  // ön camlar
+  el("polygon",{points:P([[r.x,r.y+r.h,0],[r.x+r.w,r.y+r.h,0],[r.x+r.w,r.y+r.h,1.1],[r.x,r.y+r.h,1.1]]),fill:"#dff1ff",opacity:.22,stroke:"#9aa3b2"},g);
+  el("polygon",{points:P([[r.x+r.w,r.y,0],[r.x+r.w,r.y+r.h,0],[r.x+r.w,r.y+r.h,1.1],[r.x+r.w,r.y,1.1]]),fill:"#dff1ff",opacity:.18,stroke:"#9aa3b2"},g);
+  // departman etiketi
+  const t=iso(r.x,r.y+r.h/2,1.5), label=r.d.toUpperCase(), lw=label.length*8+26;
+  el("rect",{x:t[0]-lw/2,y:t[1]-13,width:lw,height:22,rx:5,fill:"#1d2230"},g);
+  el("text",{x:t[0],y:t[1]+3,"text-anchor":"middle",fill:"#fff","font-size":11.5,"font-weight":800,"letter-spacing":".6"},g).textContent=label;
+}
+
+function say(name,text){
+  const p=people[name]; if(!p) return;
+  const b=p.bub; b.innerHTML="";
+  const t=text.length>70?text.slice(0,68)+"…":text, w=Math.min(300,t.length*6.2+24), x=p.x-w/2, y=p.y-112;
+  el("rect",{x,y,width:w,height:34,rx:10,fill:"#fff",stroke:p.color,"stroke-width":2},b);
+  el("path",{d:`M${p.x-6} ${y+34} l6 9 l6 -9z`,fill:"#fff",stroke:p.color,"stroke-width":2},b);
+  el("text",{x:p.x,y:y+21,"text-anchor":"middle","font-size":11.5,fill:"#1d2230"},b).textContent=t;
+  b.parentNode.appendChild(b); b.setAttribute("opacity",1);
+  setTimeout(()=>b.setAttribute("opacity",0),5200);
+}
+
+function openPanel(name){
+  const p=people[name]||{}, mine=STATE.log.filter(l=>l.role===name).slice(-6).reverse();
+  const panel=document.getElementById("panel");
+  panel.innerHTML=`<span class="close" onclick="this.parentNode.style.display='none'">✕</span>
+   <div class="dept">${esc(p.dept)}</div><h3>${esc(name)}</h3><p>${esc(DUTY[name]||"")}</p>
+   <b style="font-size:13px">Son işleri</b><ul>${mine.map(l=>`<li><span style="color:#7a8396">${esc(l.t)}</span> ${esc(l.text)}</li>`).join("")||"<li>Henüz kayıt yok — sıradaki turda çalışacak.</li>"}</ul>`;
+  panel.style.display="block";
+}
+
+// boşta olan rollerin "doğal" konuşmaları (gerçek kayıtlar araya girer)
+const IDLE={
+ "Trend Avcısı":"Google Trends'te yükselen aramalara bakıyorum…","İndirim Avcısı":"Yeni Black Friday fırsatı arıyorum 🛒",
+ "Doğrulama Editörü":"Kaynakları karşılaştırıyorum…","Küresel Gündem Uzmanı":"Bu haber ABD'de tutar mı?",
+ "Kanca (Hook) Uzmanı":"İlk 3 saniye için 5 alternatif yazdım","Yorumcu":"Respawn verdict hazır ✍️",
+ "Politika & Telif Denetçisi":"Telif kontrolü temiz ✅","Görsel Yönetmen":"Hareketli sahne seçiyorum 🎥",
+ "Kurgu Editörü":"Renkleri canlandırıyorum 🎨","Kapak Tasarımcısı":"Pazar videosunun kapağını çiziyorum",
+ "SEO Uzmanı":"Hashtag hacimlerine bakıyorum #","Yayın Saati Planlayıcısı":"ABD'de prime time yaklaşıyor ⏰",
+ "Ortaklık (Amazon) Sorumlusu":"Komisyon linkini ekledim 💰","Fırsatlar Sayfası Editörü":"Fırsatlar sayfası güncel",
+ "Uzun Video Yapımcısı":"Haftalık bölümleri sıralıyorum","Veri Analisti":"İzlenmeleri topluyorum 📊"
+};
+
+async function load(){
+  try{ const r=await fetch("ofis-data.json?"+Date.now()); STATE=await r.json(); }catch(e){}
+  const vids=(STATE.videos||[]).filter(v=>v.id), total=vids.reduce((a,v)=>a+(v.views||0),0);
+  document.getElementById("kpi").innerHTML=`🎬 <b>${vids.length}</b> video · 👁️ <b>${total.toLocaleString("tr-TR")}</b> izlenme<br>en iyi tarz: <b>${esc((STATE.strategy?.prefer_formats||[]).join(", ")||"-")}</b>`;
+  const last=(STATE.log||[]).slice(-1)[0];
+  document.getElementById("stamp").textContent=last?`son hareket: ${last.t}`:"ekip hazır";
+  document.getElementById("log").innerHTML=(STATE.log||[]).slice(-8).reverse().map(l=>`<li><span>${esc(l.t)}</span> <b>${esc(l.role)}</b> — ${esc(l.text)}</li>`).join("");
+}
+
+let k=0;
+function tick(){
+  const real=(STATE.log||[]).slice(-12);
+  if(real.length && k%2===0){ const l=real[(k/2)%real.length|0]; say(l.role,l.text); }
+  else { const names=Object.keys(IDLE); const n=names[Math.floor(Math.random()*names.length)]; say(n,IDLE[n]); }
+  k++;
+}
+
+// sürükle / yakınlaştır
+let vb={x:-780,y:-200,w:1720,h:1120},drag=null;
+const setVB=()=>svg.setAttribute("viewBox",`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+const stage=document.getElementById("stage");
+stage.addEventListener("pointerdown",e=>drag={x:e.clientX,y:e.clientY,vx:vb.x,vy:vb.y});
+addEventListener("pointerup",()=>drag=null);
+addEventListener("pointermove",e=>{if(!drag||pinch)return;const s=vb.w/stage.clientWidth;vb.x=drag.vx-(e.clientX-drag.x)*s;vb.y=drag.vy-(e.clientY-drag.y)*s;setVB();});
+function zoomBy(f){const cx=vb.x+vb.w/2,cy=vb.y+vb.h/2;vb.w*=f;vb.h*=f;vb.x=cx-vb.w/2;vb.y=cy-vb.h/2;setVB();}
+document.getElementById("zin").onclick=()=>zoomBy(0.8); document.getElementById("zout").onclick=()=>zoomBy(1.25);
+// iki parmakla yakınlaştırma (telefon)
+const pts=new Map(); let pinch=null;
+stage.addEventListener("pointerdown",e=>{pts.set(e.pointerId,[e.clientX,e.clientY]); if(pts.size===2){const [a,b]=[...pts.values()];pinch=Math.hypot(a[0]-b[0],a[1]-b[1]);drag=null;}});
+stage.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,[e.clientX,e.clientY]);if(pts.size===2&&pinch){const [a,b]=[...pts.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);zoomBy(pinch/d);pinch=d;}});
+addEventListener("pointerup",e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;});
+stage.style.touchAction="none";
+if(innerWidth<700){const w=1000,h=w*innerHeight/innerWidth;vb={x:80-w/2,y:380-h/2,w,h};setVB();}
+stage.addEventListener("wheel",e=>{e.preventDefault();const f=e.deltaY>0?1.1:0.9;const cx=vb.x+vb.w/2,cy=vb.y+vb.h/2;vb.w*=f;vb.h*=f;vb.x=cx-vb.w/2;vb.y=cy-vb.h/2;setVB();},{passive:false});
+
+draw(); load().then(()=>{tick(); setInterval(tick,2600);}); setInterval(load,60000);
+</script>
+</body>
+</html>

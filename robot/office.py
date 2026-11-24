@@ -56,6 +56,11 @@ def save(st):
     st["log"] = st.get("log", [])[-80:]
     st["reviews"] = st.get("reviews", [])[-30:]
     STATE.write_text(json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8")
+    # Plaza (canlı ofis) sayfası için herkese açık özet — sadece pano verisi
+    pub = {"log": st["log"][-40:], "strategy": st.get("strategy", {}),
+           "videos": [{k: v.get(k) for k in ("id", "title", "format", "views", "date", "score")} for v in st["videos"][-60:]]}
+    BOARD.parent.mkdir(parents=True, exist_ok=True)
+    (BOARD.parent / "ofis-data.json").write_text(json.dumps(pub, ensure_ascii=False), encoding="utf-8")
 
 
 def note(st, role, text):
