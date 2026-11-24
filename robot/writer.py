@@ -97,7 +97,10 @@ def choose_topic(candidates, trending):
     listing = "\n".join(f"{i}. [{c['source']}] {c['title']} ({c['published'][:16]})"
                         for i, c in enumerate(candidates[:60]))
     recent = "\n".join(f"- {t}" for t in db.recent_titles()) or "- (none)"
-    prompt = f"""Pick the ONE story that will get the most views as a YouTube Short right now for a gaming/tech audience.
+    from . import office
+    brief = office.strategy_brief()
+    prompt = f"""{brief}
+Pick the ONE story that will get the most views as a YouTube Short right now for a gaming/tech audience.
 
 Fresh headlines:
 {listing}
@@ -135,7 +138,10 @@ FORMATS = [
 
 def write_video(story, related):
     import random
-    fmt_name, fmt_rule = random.choice(FORMATS)
+    from . import office
+    pref = [f for f in FORMATS if f[0] in office.preferred_formats()]
+    # Kanal Müdürünün seçtiği tarzlar %70 ağırlıkla, diğerleri denemeye devam (öğrenmek için)
+    fmt_name, fmt_rule = random.choice(pref) if pref and random.random() < 0.7 else random.choice(FORMATS)
     log.info(f"Video tarzı: {fmt_name}")
     lang = LANG_NAME.get(config.LANGUAGE, "English")
     words = int(config.TARGET_SECONDS * (2.6 if config.LANGUAGE == "en" else 2.1))
@@ -148,6 +154,7 @@ Related headlines from other outlets (use them to cross-check facts):
 {sources}
 
 Video format for this one: {fmt_rule}
+{office.strategy_brief()}
 
 Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches and comments worldwide):
 - Use ONLY facts present in these headlines. If something is a leak/rumor, say so clearly.

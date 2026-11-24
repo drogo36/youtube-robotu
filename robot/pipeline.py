@@ -4,7 +4,7 @@ import re
 import shutil
 from datetime import datetime
 
-from . import config, db, trends, video, visuals, voice, writer
+from . import config, db, office, trends, video, visuals, voice, writer
 from .log import log
 
 
@@ -32,6 +32,7 @@ def make_one(upload=True):
         return None
     related = [a for a in trends.articles_for_topic(story["topic"]) if a["link"] != story["link"]]
     data = writer.write_video(story, related)
+    data = office.qa_review(story, data)   # Yayın Kurulu: puanla, zayıfsa yeniden yazdır
     log.info(f"Başlık: {data['title']}")
 
     stamp = datetime.now().strftime("%Y%m%d_%H%M")
@@ -68,6 +69,8 @@ def make_one(upload=True):
         deals.add(q, data["title"], vid)   # kanal profilindeki tıklanabilir "fırsatlar" sayfası
         telegram.send_video(out, (data.get("tiktok_caption") or data["title"]).strip())
         db.add_video(story["topic"], story["link"], data["title"], out, vid, "yuklendi" if vid else "uretildi")
+        if vid:
+            office.record_video(data, vid, story)
         return out
     finally:
         shutil.rmtree(work, ignore_errors=True)
