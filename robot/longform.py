@@ -45,6 +45,21 @@ Reply ONLY with JSON:
     chapters = [c for c in data.get("chapters", []) if str(c.get("script", "")).strip()]
     if len(chapters) < 4:
         raise ValueError("Uzun video senaryosu çok kısa geldi")
+    # Hafif model bölümleri kısa yazabiliyor: kısa kalan her bölümü aynı bilgilerle genişlet
+    for i, ch in enumerate(chapters):
+        target = 45 if i == 0 else (70 if i == len(chapters) - 1 else 160)
+        if len(ch["script"].split()) >= target * 0.8:
+            continue
+        try:
+            more = writer.ask_claude(
+                f"Rewrite this YouTube narration chapter titled \"{ch['heading']}\" to about {target} words. "
+                f"Keep every fact, add context, comparisons and why it matters for players; do not invent new facts; "
+                f"keep any 'Respawn verdict:' line; short energetic sentences. Reply with the narration text only.\n\n"
+                f"{ch['script']}", 1500, writer.SYSTEM).strip().strip('"')
+            if len(more.split()) > len(ch["script"].split()):
+                ch["script"] = more
+        except Exception as e:
+            log.warning(f"Bölüm genişletilemedi: {e}")
     data["chapters"] = chapters
     return data
 
