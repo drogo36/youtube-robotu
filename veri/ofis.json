@@ -1,5 +1,36 @@
 {
- "strategy": {},
+ "strategy": {
+  "summary_tr": "GTA 6 haberleri ve Black Friday indirimleri (özellikle Switch 2 ve OLED monitörler) kanalın ortalama izlenmelerini sırtladı. Ancak genel olarak 'deal' (indirim) videoları ve tekrara düşen GTA 6 başlıkları düşük izlenmeler aldı, format çeşitliliği eksik kaldı.",
+  "decisions_tr": [
+   "GTA 6 içeriklerinde sadece doğrulanmış haberlere odaklanıp, başlık spam'inden kaçınacağız.",
+   "Tüm videolarda izin verilen formatları (breaking, 3things, vs.) aktif olarak kullanacağız.",
+   "Amazon ortaklık gelirini artırmak için Black Friday indirimlerini '3things' formatıyla tek videoda birleştireceğiz."
+  ],
+  "focus": [
+   "GTA 6",
+   "Nintendo Switch 2",
+   "OLED Monitors",
+   "Hardware Deals"
+  ],
+  "avoid": [
+   "Spam veya kanıtlanmamış sızıntı başlıkları",
+   "Format içermeyen ham duyuru videoları"
+  ],
+  "prefer_formats": [
+   "breaking",
+   "3things",
+   "hottake"
+  ],
+  "hook_tips": [
+   "İlk 2 saniyede izleyiciye doğrudan bir fayda veya şok edici bir veri sun.",
+   "Soru cümleleriyle merak uyandır ama clickbait sınırını aşma."
+  ],
+  "title_tips": [
+   "Emoji kullanımını başlıklarda stratejik tut.",
+   "Fiyat veya net bir değer önerisi (örn. indirim oranları) başlıkta görünmeli."
+  ],
+  "date": "2026-11-24T23:40"
+ },
  "videos": [
   {
    "id": "36hNzWBAO4A",
@@ -9,7 +40,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-20 07:16",
-   "views": 0
+   "views": 0,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "Z0SK0bfZrXg",
@@ -19,7 +51,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-20 07:37",
-   "views": 0
+   "views": 675,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "nYPGLl1Uitw",
@@ -29,7 +62,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-20 20:49",
-   "views": 0
+   "views": 60,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "yoTFeesvCKY",
@@ -39,7 +73,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-21 00:28",
-   "views": 0
+   "views": 1,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "AdIdR9nwjMg",
@@ -49,7 +84,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-21 02:27",
-   "views": 0
+   "views": 0,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "gVu6yVVWv1I",
@@ -59,7 +95,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-21 15:00",
-   "views": 0
+   "views": 117,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "ydWLY-TzSZo",
@@ -69,7 +106,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-22 00:59",
-   "views": 0
+   "views": 259,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "3aIwXbEVwHg",
@@ -79,7 +117,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-22 04:16",
-   "views": 0
+   "views": 20,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "UBWKeOpfBXg",
@@ -89,7 +128,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-22 11:11",
-   "views": 0
+   "views": 50,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "PNOiWCk95XA",
@@ -99,7 +139,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-23 00:09",
-   "views": 0
+   "views": 31,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "2ZULUxpa4ok",
@@ -109,7 +150,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-23 03:30",
-   "views": 0
+   "views": 13,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "owHuxzlRE6I",
@@ -119,7 +161,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-23 12:17",
-   "views": 0
+   "views": 13,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "2ZzLj7rD7x8",
@@ -129,7 +172,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-24 05:14",
-   "views": 0
+   "views": 97,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "4s_y59fTO_s",
@@ -139,7 +183,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-24 08:23",
-   "views": 0
+   "views": 107,
+   "checked": "2026-11-24 23:39"
   },
   {
    "id": "1EK2le4LGXQ",
@@ -149,7 +194,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-24 12:49",
-   "views": 0
+   "views": 9,
+   "checked": "2026-11-24 23:39"
   }
  ],
  "log": [
@@ -157,7 +203,27 @@
    "t": "2026-11-24 23:37",
    "role": "Kanal Müdürü",
    "text": "Sanal ofis kuruldu: 20 kişilik ekip göreve başladı"
+  },
+  {
+   "t": "2026-11-24 23:39",
+   "role": "Veri Analisti",
+   "text": "15 videonun güncel izlenmesi toplandı"
+  },
+  {
+   "t": "2026-11-24 23:40",
+   "role": "Kanal Müdürü",
+   "text": "Günlük strateji toplantısı: GTA 6 içeriklerinde sadece doğrulanmış haberlere odaklanıp, başlık spam'inden kaçınacağız.; Tüm videolarda izin verilen formatları (breaking, 3things, vs.) aktif olarak kullanacağız.; Amazon ortaklık gelirini artırmak için Black Friday indirimlerini '3things' formatıyla t"
   }
  ],
- "reviews": []
+ "reviews": [
+  {
+   "date": "2026-11-24T23:40",
+   "summary": "GTA 6 haberleri ve Black Friday indirimleri (özellikle Switch 2 ve OLED monitörler) kanalın ortalama izlenmelerini sırtladı. Ancak genel olarak 'deal' (indirim) videoları ve tekrara düşen GTA 6 başlıkları düşük izlenmeler aldı, format çeşitliliği eksik kaldı.",
+   "decisions": [
+    "GTA 6 içeriklerinde sadece doğrulanmış haberlere odaklanıp, başlık spam'inden kaçınacağız.",
+    "Tüm videolarda izin verilen formatları (breaking, 3things, vs.) aktif olarak kullanacağız.",
+    "Amazon ortaklık gelirini artırmak için Black Friday indirimlerini '3things' formatıyla tek videoda birleştireceğiz."
+   ]
+  }
+ ]
 }
