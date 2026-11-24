@@ -28,7 +28,8 @@ def _ask_gemini(prompt, system=None):
     if system:
         body["systemInstruction"] = {"parts": [{"text": system}]}
     headers = {"x-goog-api-key": config.GEMINI_API_KEY, "content-type": "application/json"}
-    models = list(dict.fromkeys([config.GEMINI_MODEL, "gemini-flash-lite-latest", "gemini-flash-latest"]))
+    models = list(dict.fromkeys([config.GEMINI_MODEL, "gemini-flash-lite-latest", "gemini-2.5-flash-lite",
+                               "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash"]))
     last = None
     for attempt in range(6):
         model = models[attempt % len(models)]
