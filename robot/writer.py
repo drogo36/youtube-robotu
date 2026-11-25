@@ -114,6 +114,8 @@ Rising Google searches right now (boost stories that match these): {', '.join(tr
 Videos we already published this week (do NOT repeat the same story):
 {recent}
 
+Rising searches are tagged with their country code: a story that is rising in several big markets (US, India, Brazil,
+Indonesia, Mexico, Philippines...) has the biggest worldwide view potential — prefer it.
 Prefer: stories with GLOBAL appeal that people in many countries would stop scrolling for (huge franchises, viral moments, shocking numbers, surprising tech, free stuff, big release dates, trailers, leaks with big buzz).
 MONEY RULE: we earn Amazon affiliate commission when a video is about something viewers can BUY (consoles, games, phones, accessories, deals, price drops). Late November to mid December is Black Friday / Cyber Monday / holiday shopping season: in this period strongly prefer real deal and price-drop stories about popular products (but never invent a deal; only use what the headline says). At least every second video should be a buyable-product story when one is available.
 VARIETY RULE: our recent videos are listed above. Do NOT pick the same game/franchise/company as our last 3 videos unless it is truly massive breaking news. Rotate between games, consoles, phones, AI and tech so the channel never feels repetitive.
@@ -190,3 +192,33 @@ Reply ONLY with JSON:
     data["pexels_queries"] = data.get("pexels_queries") or ["city night", "gaming"]
     data["image_prompts"] = [str(x) for x in (data.get("image_prompts") or [])][:6]
     return data
+
+
+def localize(title, description):
+    """Başlık + kısa açıklamayı büyük pazarların dillerine çevirir (YouTube her izleyiciye kendi dilinde gösterir)."""
+    langs = config.LOCALIZE_LANGS
+    if not langs:
+        return {}
+    short = description.split("Sources:")[0].strip()[:400]
+    tags = " ".join(w for w in description.split() if w.startswith("#"))[:200]
+    prompt = f"""Translate this YouTube video title and description for viewers in these languages: {", ".join(langs)}.
+Keep it natural, catchy and native for gamers in each country (not word-for-word). Keep emojis and product/game names.
+Title max 90 characters. Do not add facts.
+
+Title: {title}
+Description: {short}
+
+Reply ONLY with JSON: {{"<lang code>": {{"title": "...", "description": "..."}}, ...}}"""
+    try:
+        data = _json(ask_claude(prompt, 4000, SYSTEM))
+    except Exception as e:
+        log.warning(f"Çeviriler alınamadı: {e}")
+        return {}
+    out = {}
+    for lang in langs:
+        v = data.get(lang) or {}
+        t, d = str(v.get("title", "")).strip(), str(v.get("description", "")).strip()
+        if t and d:
+            out[lang] = {"title": t[:100], "description": (d + ("\n\n" + tags if tags else ""))[:4900]}
+    log.info(f"Çeviriler hazır: {len(out)} dil")
+    return out

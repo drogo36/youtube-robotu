@@ -279,7 +279,8 @@ def make_weekly(upload=True, task=""):
         vid = None
         if upload:
             from . import youtube
-            vid = youtube.upload(final, data["title"][:100], desc, data.get("tags", []))
+            vid = youtube.upload(final, data["title"][:100], desc, data.get("tags", []),
+                                 localizations=writer.localize(data["title"], desc))
             youtube.set_thumbnail(vid, thumb)
         db.add_video("haftalik", "", data["title"], final, vid, "yuklendi" if vid else "uretildi")
         if vid and task:

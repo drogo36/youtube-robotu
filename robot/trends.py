@@ -51,14 +51,25 @@ def google_news(query, max_age_hours=36):
     return items
 
 
-def google_trends():
-    """Ülkedeki genel yükselen aramalar (oyun/teknoloji dışı olanları Claude eler)."""
+def _trends_geo(geo):
     try:
-        root = _rss(f"https://trends.google.com/trending/rss?geo={config.TRENDS_GEO}")
+        root = _rss(f"https://trends.google.com/trending/rss?geo={geo}")
     except Exception as e:
-        log.warning(f"Google Trends okunamadı: {e}")
+        log.warning(f"Google Trends okunamadı ({geo}): {e}")
         return []
-    return [(it.findtext("title") or "").strip() for it in root.iter("item") if it.findtext("title")][:25]
+    return [(it.findtext("title") or "").strip() for it in root.iter("item") if it.findtext("title")]
+
+
+def google_trends():
+    """ABD + dönüşümlü 2 büyük pazarın yükselen aramaları (oyun/teknoloji dışı olanları yapay zekâ eler)."""
+    import random
+    others = [g for g in config.TRENDS_GEOS if g != config.TRENDS_GEO]
+    geos = [config.TRENDS_GEO] + random.sample(others, min(2, len(others)))
+    out = []
+    for g in geos:
+        out += [f"{t} ({g})" for t in _trends_geo(g)[:12]]
+        time.sleep(2)
+    return out[:36]
 
 
 def collect():

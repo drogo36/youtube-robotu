@@ -86,4 +86,4 @@ def make_one(upload=True, task=""):
 def youtube_upload(path, data):
     from . import youtube
     desc = data["description"].strip()
-    return youtube.upload(path, data["title"], desc, data["tags"])
+    return youtube.upload(path, data["title"], desc, data["tags"], localizations=writer.localize(data["title"], desc))

@@ -152,7 +152,7 @@ def _safe_tags(tags, limit=480):
     return out
 
 
-def upload(video_path, title, description, tags, privacy=None):
+def upload(video_path, title, description, tags, privacy=None, localizations=None):
     tags = _safe_tags(tags)
     privacy = privacy or config.PRIVACY
     meta = {
@@ -161,15 +161,23 @@ def upload(video_path, title, description, tags, privacy=None):
                     "defaultAudioLanguage": config.LANGUAGE},
         "status": {"privacyStatus": privacy, "selfDeclaredMadeForKids": False, "embeddable": True},
     }
+    if localizations:
+        meta["localizations"] = localizations
+    parts = "snippet,status,localizations" if localizations else "snippet,status"
     size = video_path.stat().st_size
     for attempt in range(5):
         try:
-            init = requests.post(UPLOAD_URL, params={"uploadType": "resumable", "part": "snippet,status"},
+            init = requests.post(UPLOAD_URL, params={"uploadType": "resumable", "part": parts},
                                  headers={"Authorization": f"Bearer {_token()}",
                                           "Content-Type": "application/json; charset=UTF-8",
                                           "X-Upload-Content-Type": "video/mp4",
                                           "X-Upload-Content-Length": str(size)},
                                  data=json.dumps(meta), timeout=60)
+            if init.status_code == 400 and "localizations" in meta:   # çeviri reddedilirse çevirisiz yükle
+                log.warning(f"Çeviriler kabul edilmedi, çevirisiz yükleniyor: {init.text[:200]}")
+                meta.pop("localizations")
+                parts = "snippet,status"
+                continue
             if init.status_code == 403 and "quota" in init.text.lower():
                 raise SystemExit("YouTube günlük API kotası doldu. Yarın otomatik devam edecek.")
             if init.status_code != 200:

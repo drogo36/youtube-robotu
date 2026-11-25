@@ -63,6 +63,10 @@ DEALS_PER_RUN = _int("DEALS_PER_RUN", 3)  # her turda bakılacak indirim aramas�
 KEYWORDS_PER_RUN = _int("KEYWORDS_PER_RUN", 9)  # her turda havuzdan rastgele bu kadar konu taranır
 USE_GOOGLE_TRENDS = _get("USE_GOOGLE_TRENDS", "1") == "1"
 TRENDS_GEO = _get("TRENDS_GEO", "US")
+# YouTube'un en büyük oyun izleyici pazarları: her turda bunlardan 2'sinin yükselen aramaları da taranır
+TRENDS_GEOS = [g.strip() for g in _get("TRENDS_GEOS", "US,IN,BR,ID,MX,PH,GB,DE,JP,TR").split(",") if g.strip()]
+# Başlık/açıklama çevirileri: bu ülkelerdeki izleyiciler videoyu kendi dilinde başlıkla görür
+LOCALIZE_LANGS = [l.strip() for l in _get("LOCALIZE_LANGS", "es,pt,hi,id,fr,de,ar,ja,ko,tr,ru,it,tl,vi,th").split(",") if l.strip()]
 
 VIDEOS_PER_DAY = max(1, min(_int("VIDEOS_PER_DAY", 3), 6))  # YouTube API kotası günde ~6 yüklemeye izin verir
 ACTIVE_START_HOUR = _int("ACTIVE_START_HOUR", 10)
