@@ -31,7 +31,7 @@ def _ask_gemini(prompt, system=None):
     models = list(dict.fromkeys([config.GEMINI_MODEL, "gemini-flash-lite-latest", "gemini-2.5-flash-lite",
                                "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash"]))
     last = None
-    for attempt in range(6):
+    for attempt in range(10):   # Gemini ücretsiz katmanı yoğunken (503) daha uzun ve sabırlı dene
         model = models[attempt % len(models)]
         try:
             r = requests.post(GEMINI_URL.format(model=model), headers=headers, json=body, timeout=75)
@@ -49,7 +49,7 @@ def _ask_gemini(prompt, system=None):
             return text
         except (requests.RequestException, RuntimeError) as e:
             last = e
-            wait = 15 * (attempt + 1)
+            wait = min(20 * (attempt + 1), 60)
             log.warning(f"Gemini ({model}) yanıt vermedi, {wait} sn sonra diğer modelle tekrar: {e}")
             time.sleep(wait)
     raise RuntimeError(f"Gemini API'ye ulaşılamadı: {last}")
