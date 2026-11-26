@@ -130,14 +130,16 @@ def link_channel(url_or_code):
     """Telefondan/tarayıcıdan gelen Google onay kodunu kalıcı anahtara çevirir (kardeş kanallar için)."""
     from urllib.parse import urlparse, parse_qs
     txt = url_or_code.strip()
-    code = parse_qs(urlparse(txt).query).get("code", [""])[0] if "code=" in txt else txt
-    code = code.strip()
+    q = parse_qs(urlparse(txt).query)
+    code = (q.get("code", [""])[0] if "code=" in txt else txt).strip()
+    verifier = q.get("verifier", [""])[0].strip()
     if not code:
         raise SystemExit("Adreste onay kodu bulunamadı. Adres çubuğundaki tam adresi kopyala.")
     c = _client()
     r = requests.post(c["token_uri"], data={"code": code, "client_id": c["client_id"],
                       "client_secret": c.get("client_secret", ""), "redirect_uri": LINK_REDIRECT,
-                      "grant_type": "authorization_code"}, timeout=30)
+                      "grant_type": "authorization_code", **({"code_verifier": verifier} if verifier else {})},
+                      timeout=30)
     if r.status_code != 200:
         raise SystemExit(f"Google kodu kabul etmedi (kod 10 dakikada bir eskir, tekrar dene): {' '.join(r.text.split())[:200]}")
     tok = r.json()
