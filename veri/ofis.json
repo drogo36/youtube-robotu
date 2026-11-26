@@ -1,35 +1,35 @@
 {
  "strategy": {
-  "summary_tr": "GTA 6 sızıntı/spam videoları cazibesini yitirirken, net donanım indirimleri ve Nintendo Switch 2 hakkındaki güncel gelişmeler istikrarlı izlenme topladı. Özellikle 'breaking' ve 'versus' etiketli deal videoları, doğru kitleye ulaşmada sıradan duyurulara göre çok daha başarılı oldu.",
+  "summary_tr": "GTA 6 başlıklı tekrara düşen içerikler izleyicide karşılık bulmazken, Switch 2 haberleri ve net indirim oranları içeren '3things' ve 'breaking' formatları daha istikrarlı izlenme aldı. Özellikle donanım indirimleri ve net fiyat odaklı videolar kanalın performansını yukarı taşıyor.",
   "decisions_tr": [
-   "Tekrara düşen GTA 6 başlıklarını tamamen kesip yalnızca resmi satış ve donanım etkilerine odaklanacağız.",
-   "Amazon gelirini artırmak için en iyi donanım indirimlerini tek bir '3things' formatında toplayacağız.",
-   "Tüm yeni videolarda izin verilen formatlardan (breaking, 3things, versus) birini mutlaka uygulayacağız."
+   "Spekülatif GTA 6 içeriklerini tamamen bırakıp sadece donanım/satış etkilerine odaklanacağız.",
+   "Amazon gelirini artırmak için en iyi fırsatları tek video altında '3things' formatıyla derleyeceğiz.",
+   "Tüm yeni videolarda mutlaka izin verilen (breaking, 3things, versus) formatlardan birini kullanacağız."
   ],
   "focus": [
    "Nintendo Switch 2",
-   "GPU ve Laptop İndirimleri",
-   "OLED Monitörler",
+   "GPU ve Oyuncu Laptopu İndirimleri",
+   "OLED Monitör Fırsatları",
    "GTA 6 Donanım Etkisi"
   ],
   "avoid": [
-   "Kanıtlanmamış veya spekülatif GTA 6 sızıntıları",
-   "Format etiketi olmayan ham ve tekdüze duyuru videoları"
+   "Kanıtlanmamış veya tekrarlayan GTA 6 sızıntıları",
+   "Format etiketi bulunmayan ham duyurular"
   ],
   "prefer_formats": [
-   "breaking",
    "3things",
+   "breaking",
    "versus"
   ],
   "hook_tips": [
-   "İlk 2 saniyede doğrudan net fiyat veya indirim miktarını ekrana yansıt.",
-   "Oyuncunun bu haberden veya indirimden kazancını anında netleştir."
+   "İlk 2 saniyede doğrudan net fiyatı veya indirim oranını ekranda göster.",
+   "Oyuncunun bu indirimden veya haberden sağladığı faydayı anında netleştir."
   ],
   "title_tips": [
-   "Başlıklarda mutlaka net bir miktar, oran veya '$/£' değeri kullan.",
-   "Emojileri başlığın sonunda tek bir adetle sınırlandırarak güvenilirlik algısını artır."
+   "Başlıklarda mutlaka net bir miktar, oran veya para birimi kullan.",
+   "Emojileri başlığın sonunda tek adetle sınırlandırarak güvenilirlik algısını artır."
   ],
-  "date": "2026-11-26T02:36"
+  "date": "2026-11-27T02:48"
  },
  "videos": [
   {
@@ -41,7 +41,7 @@
    "score": null,
    "date": "2026-11-20 07:16",
    "views": 0,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "Z0SK0bfZrXg",
@@ -52,7 +52,7 @@
    "score": null,
    "date": "2026-11-20 07:37",
    "views": 676,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "nYPGLl1Uitw",
@@ -63,7 +63,7 @@
    "score": null,
    "date": "2026-11-20 20:49",
    "views": 60,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "yoTFeesvCKY",
@@ -74,7 +74,7 @@
    "score": null,
    "date": "2026-11-21 00:28",
    "views": 1,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "AdIdR9nwjMg",
@@ -85,7 +85,7 @@
    "score": null,
    "date": "2026-11-21 02:27",
    "views": 0,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "gVu6yVVWv1I",
@@ -96,7 +96,7 @@
    "score": null,
    "date": "2026-11-21 15:00",
    "views": 118,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "ydWLY-TzSZo",
@@ -106,8 +106,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-22 00:59",
-   "views": 261,
-   "checked": "2026-11-26 02:36"
+   "views": 263,
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "3aIwXbEVwHg",
@@ -118,7 +118,7 @@
    "score": null,
    "date": "2026-11-22 04:16",
    "views": 21,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "UBWKeOpfBXg",
@@ -129,7 +129,7 @@
    "score": null,
    "date": "2026-11-22 11:11",
    "views": 52,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "PNOiWCk95XA",
@@ -140,7 +140,7 @@
    "score": null,
    "date": "2026-11-23 00:09",
    "views": 32,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "2ZULUxpa4ok",
@@ -151,7 +151,7 @@
    "score": null,
    "date": "2026-11-23 03:30",
    "views": 14,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "owHuxzlRE6I",
@@ -162,7 +162,7 @@
    "score": null,
    "date": "2026-11-23 12:17",
    "views": 15,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "2ZzLj7rD7x8",
@@ -172,8 +172,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-24 05:14",
-   "views": 124,
-   "checked": "2026-11-26 02:36"
+   "views": 123,
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "4s_y59fTO_s",
@@ -183,8 +183,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-24 08:23",
-   "views": 110,
-   "checked": "2026-11-26 02:36"
+   "views": 108,
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "1EK2le4LGXQ",
@@ -194,8 +194,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-24 12:49",
-   "views": 20,
-   "checked": "2026-11-26 02:36"
+   "views": 21,
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "SiegfGEa48s",
@@ -205,8 +205,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-25 00:13",
-   "views": 284,
-   "checked": "2026-11-26 02:36"
+   "views": 296,
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "aEhnV6kF6fE",
@@ -217,7 +217,7 @@
    "score": 7,
    "date": "2026-11-25 04:10",
    "views": 8,
-   "checked": "2026-11-26 02:36"
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "R82DpUtnrlU",
@@ -227,8 +227,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-25 08:49",
-   "views": 16,
-   "checked": "2026-11-26 02:36"
+   "views": 33,
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "lh7jQbnf4pI",
@@ -238,7 +238,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-26 02:42",
-   "views": 0
+   "views": 73,
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "5QzGWkJphJA",
@@ -248,7 +249,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-26 06:37",
-   "views": 0
+   "views": 88,
+   "checked": "2026-11-27 02:48"
   },
   {
    "id": "aZE_CGaxdaM",
@@ -258,6 +260,17 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-26 12:51",
+   "views": 32,
+   "checked": "2026-11-27 02:48"
+  },
+  {
+   "id": "M7MscHwhlcs",
+   "title": "Switch 2 $499 Bundle Leaked #Nintendo #shorts",
+   "format": "breaking",
+   "topic": "Nintendo Switch 2 Black Friday Bundle",
+   "deal": true,
+   "score": 7,
+   "date": "2026-11-27 02:54",
    "views": 0
   }
  ],
@@ -371,6 +384,31 @@
    "t": "2026-11-26 12:51",
    "role": "Yayın Yönetmeni",
    "text": "Yayına onay verildi: Save $758 on Legion Go S Handheld 💻"
+  },
+  {
+   "t": "2026-11-27 02:48",
+   "role": "Veri Analisti",
+   "text": "21 videonun güncel izlenmesi toplandı"
+  },
+  {
+   "t": "2026-11-27 02:48",
+   "role": "Kanal Müdürü",
+   "text": "Günlük strateji toplantısı: Spekülatif GTA 6 içeriklerini tamamen bırakıp sadece donanım/satış etkilerine odaklanacağız.; Amazon gelirini artırmak için en iyi fırsatları tek video altında '3things' formatıyla derleyeceğiz.; Tüm yeni videolarda mutlaka izin verilen (breaking, 3things, versus) formatl"
+  },
+  {
+   "t": "2026-11-27 02:49",
+   "role": "Yayın Kurulu Başkanı",
+   "text": "4/10 — geri çevrildi, yeniden yazılıyor (Hook does not lead with a direct price/discount figure or player benefit in the first 6 words as required by the hook strategy.; Title lacks a clear amount, percentage, or currency.)"
+  },
+  {
+   "t": "2026-11-27 02:49",
+   "role": "Baş Senarist",
+   "text": "Kurulun notlarına göre yeniden yazıldı: Switch 2 $499 Bundle Leaked #Nintendo #shorts"
+  },
+  {
+   "t": "2026-11-27 02:54",
+   "role": "Yayın Yönetmeni",
+   "text": "Yayına onay verildi: Switch 2 $499 Bundle Leaked #Nintendo #shorts"
   }
  ],
  "reviews": [
@@ -390,6 +428,15 @@
     "Tekrara düşen GTA 6 başlıklarını tamamen kesip yalnızca resmi satış ve donanım etkilerine odaklanacağız.",
     "Amazon gelirini artırmak için en iyi donanım indirimlerini tek bir '3things' formatında toplayacağız.",
     "Tüm yeni videolarda izin verilen formatlardan (breaking, 3things, versus) birini mutlaka uygulayacağız."
+   ]
+  },
+  {
+   "date": "2026-11-27T02:48",
+   "summary": "GTA 6 başlıklı tekrara düşen içerikler izleyicide karşılık bulmazken, Switch 2 haberleri ve net indirim oranları içeren '3things' ve 'breaking' formatları daha istikrarlı izlenme aldı. Özellikle donanım indirimleri ve net fiyat odaklı videolar kanalın performansını yukarı taşıyor.",
+   "decisions": [
+    "Spekülatif GTA 6 içeriklerini tamamen bırakıp sadece donanım/satış etkilerine odaklanacağız.",
+    "Amazon gelirini artırmak için en iyi fırsatları tek video altında '3things' formatıyla derleyeceğiz.",
+    "Tüm yeni videolarda mutlaka izin verilen (breaking, 3things, versus) formatlardan birini kullanacağız."
    ]
   }
  ]
