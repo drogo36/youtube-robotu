@@ -139,7 +139,7 @@ def link_channel(url_or_code):
                       "client_secret": c.get("client_secret", ""), "redirect_uri": LINK_REDIRECT,
                       "grant_type": "authorization_code"}, timeout=30)
     if r.status_code != 200:
-        raise SystemExit(f"Google kodu kabul etmedi (kod 10 dakikada bir eskir, tekrar dene): {r.text[:200]}")
+        raise SystemExit(f"Google kodu kabul etmedi (kod 10 dakikada bir eskir, tekrar dene): {' '.join(r.text.split())[:200]}")
     tok = r.json()
     if not tok.get("refresh_token"):
         raise SystemExit("Google kalıcı anahtar vermedi. Sayfadaki 'Robota bağla' düğmesinden baştan dene.")
