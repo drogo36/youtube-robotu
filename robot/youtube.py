@@ -116,12 +116,35 @@ TOKEN_ENC = config.DATA / "token.enc"           # kardeş kanalın anahtarı, ş
 
 
 def _crypt(data, decrypt=False):
-    """Kardeş kanal anahtarını şifreler/çözer. Şifre, GitHub gizli anahtarı YT_CLIENT_SECRET'tir."""
+    """Kardeş kanal anahtarını şifreler/çözer (saf Python: PBKDF2 + HMAC-SHA256 akış şifresi + bütünlük etiketi).
+    Şifre, GitHub gizli anahtarı YT_CLIENT_SECRET'tir (Mac'teki client_secret.json ile aynı)."""
+    import base64, hashlib, hmac
     key = _env("YT_CLIENT_SECRET")
     if not key:
         raise SystemExit("YT_CLIENT_SECRET yok, kanal anahtarı çözülemez.")
-    args = ["openssl", "enc", "-aes-256-cbc", "-pbkdf2", "-iter", "200000", "-a", "-A", "-pass", "env:TOKEN_KEY"]
-    args += ["-d"] if decrypt else ["-salt"]
+
+    def stream(k, nonce, n):
+        out, i = b"", 0
+        while len(out) < n:
+            out += hmac.new(k, nonce + i.to_bytes(8, "big"), hashlib.sha256).digest()
+            i += 1
+        return out[:n]
+
+    if not decrypt:
+        salt, nonce = os.urandom(16), os.urandom(16)
+        k = hashlib.pbkdf2_hmac("sha256", key.encode(), salt, 200000, 32)
+        ct = bytes(a ^ b for a, b in zip(data, stream(k, nonce, len(data))))
+        tag = hmac.new(k, b"tag" + nonce + ct, hashlib.sha256).digest()
+        return b"v2:" + base64.b64encode(salt + nonce + ct + tag)
+    data = data.strip()
+    if data.startswith(b"v2:"):
+        raw = base64.b64decode(data[3:])
+        salt, nonce, ct, tag = raw[:16], raw[16:32], raw[32:-32], raw[-32:]
+        k = hashlib.pbkdf2_hmac("sha256", key.encode(), salt, 200000, 32)
+        if not hmac.compare_digest(tag, hmac.new(k, b"tag" + nonce + ct, hashlib.sha256).digest()):
+            raise SystemExit("Kanal anahtarı çözülemedi (şifre uyuşmuyor).")
+        return bytes(a ^ b for a, b in zip(ct, stream(k, nonce, len(ct))))
+    args = ["openssl", "enc", "-d", "-aes-256-cbc", "-pbkdf2", "-iter", "200000", "-a", "-A", "-pass", "env:TOKEN_KEY"]
     return subprocess.run(args, input=data, capture_output=True, check=True,
                           env={**os.environ, "TOKEN_KEY": key}).stdout
 
