@@ -4,7 +4,9 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "veri"
+# Kardeş kanallar (es / pt / id ...): her kanalın hafızası ayrı klasörde tutulur
+CHANNEL_KEY = os.environ.get("CHANNEL_KEY", "").strip().lower()
+DATA = ROOT / "veri" / "kanallar" / CHANNEL_KEY if CHANNEL_KEY else ROOT / "veri"
 WORK = DATA / "calisma"
 OUTPUT = DATA / "videolar"
 LOGS = DATA / "loglar"
@@ -54,6 +56,8 @@ WATCH_KEYWORDS = [k.strip() for k in _get(
     "Steam new game,EA Sports FC,Elden Ring,Marvel game,anime game,esports,free game,"
     "iPhone,Samsung Galaxy,ChatGPT,AI robot,NVIDIA,Tesla,SpaceX,viral video game,game trailer",
 ).split(",") if k.strip()]
+# Kardeş kanalların yerel popüler oyunları (ör. Endonezya: Mobile Legends) havuza eklenir
+WATCH_KEYWORDS += [k.strip() for k in _get("EXTRA_KEYWORDS", "").split(",") if k.strip()]
 DEAL_KEYWORDS = [k.strip() for k in _get(
     "DEAL_KEYWORDS",
     "Black Friday gaming deals,PS5 deal,Nintendo Switch 2 deal,Xbox deal,video game price drop,"
@@ -88,6 +92,10 @@ DB_FILE = DATA / "robot.db"
 DEFAULT_VOICES = {
     "en": ("en-US-AndrewNeural", "Samantha"),   # (edge-tts sesi, Mac 'say' yedek sesi)
     "tr": ("tr-TR-AhmetNeural", "Yelda"),
+    "es": ("es-MX-JorgeNeural", "Paulina"),
+    "pt": ("pt-BR-AntonioNeural", "Luciana"),
+    "id": ("id-ID-ArdiNeural", "Damayanti"),
+    "hi": ("hi-IN-MadhurNeural", "Lekha"),
 }
 
 

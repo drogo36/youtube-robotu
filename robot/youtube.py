@@ -3,6 +3,7 @@ import base64
 import hashlib
 import http.server
 import json
+import subprocess
 import os
 import secrets
 import socket
@@ -109,8 +110,60 @@ def login():
     return name
 
 
+MAIN_CHANNEL_ID = "UC2gYCJRku-P0QIeNCdA4d-Q"     # İngilizce ana kanal (Respawn Report)
+LINK_REDIRECT = "http://127.0.0.1:8765"         # kanal-bagla sayfasının kullandığı dönüş adresi
+TOKEN_ENC = config.DATA / "token.enc"           # kardeş kanalın anahtarı, şifreli olarak depoda durur
+
+
+def _crypt(data, decrypt=False):
+    """Kardeş kanal anahtarını şifreler/çözer. Şifre, GitHub gizli anahtarı YT_CLIENT_SECRET'tir."""
+    key = _env("YT_CLIENT_SECRET")
+    if not key:
+        raise SystemExit("YT_CLIENT_SECRET yok, kanal anahtarı çözülemez.")
+    args = ["openssl", "enc", "-aes-256-cbc", "-pbkdf2", "-iter", "200000", "-a", "-A", "-pass", "env:TOKEN_KEY"]
+    args += ["-d"] if decrypt else ["-salt"]
+    return subprocess.run(args, input=data, capture_output=True, check=True,
+                          env={**os.environ, "TOKEN_KEY": key}).stdout
+
+
+def link_channel(url_or_code):
+    """Telefondan/tarayıcıdan gelen Google onay kodunu kalıcı anahtara çevirir (kardeş kanallar için)."""
+    from urllib.parse import urlparse, parse_qs
+    txt = url_or_code.strip()
+    code = parse_qs(urlparse(txt).query).get("code", [""])[0] if "code=" in txt else txt
+    code = code.strip()
+    if not code:
+        raise SystemExit("Adreste onay kodu bulunamadı. Adres çubuğundaki tam adresi kopyala.")
+    c = _client()
+    r = requests.post(c["token_uri"], data={"code": code, "client_id": c["client_id"],
+                      "client_secret": c.get("client_secret", ""), "redirect_uri": LINK_REDIRECT,
+                      "grant_type": "authorization_code"}, timeout=30)
+    if r.status_code != 200:
+        raise SystemExit(f"Google kodu kabul etmedi (kod 10 dakikada bir eskir, tekrar dene): {r.text[:200]}")
+    tok = r.json()
+    if not tok.get("refresh_token"):
+        raise SystemExit("Google kalıcı anahtar vermedi. Sayfadaki 'Robota bağla' düğmesinden baştan dene.")
+    tok["expires_at"] = time.time() + tok.get("expires_in", 3600) - 60
+    config.TOKEN_FILE.write_text(json.dumps(tok), encoding="utf-8")
+    ch = requests.get("https://www.googleapis.com/youtube/v3/channels", params={"part": "snippet", "mine": "true"},
+                      headers={"Authorization": f"Bearer {tok['access_token']}"}, timeout=30).json().get("items", [])
+    if not ch:
+        config.TOKEN_FILE.unlink(missing_ok=True)
+        raise SystemExit("Seçilen hesapta YouTube kanalı yok. Onay ekranında yeni kanalı seç.")
+    if ch[0]["id"] == MAIN_CHANNEL_ID:
+        config.TOKEN_FILE.unlink(missing_ok=True)
+        raise SystemExit("Ana kanal (Respawn Report) seçildi. Onay ekranında YENİ dil kanalını seçmelisin.")
+    TOKEN_ENC.write_bytes(_crypt(tok["refresh_token"].encode()))
+    return ch[0]["snippet"]["title"], ch[0]["id"]
+
+
 def _token():
-    if _env("YT_REFRESH_TOKEN") and not config.TOKEN_FILE.exists():
+    if config.CHANNEL_KEY and not config.TOKEN_FILE.exists():
+        if not TOKEN_ENC.exists():
+            raise SystemExit(f"'{config.CHANNEL_KEY}' kanalı henüz robota bağlanmadı (kanallar sayfasından bağla).")
+        rt = _crypt(TOKEN_ENC.read_bytes(), decrypt=True).decode().strip()
+        config.TOKEN_FILE.write_text(json.dumps({"refresh_token": rt, "expires_at": 0}), encoding="utf-8")
+    if not config.CHANNEL_KEY and _env("YT_REFRESH_TOKEN") and not config.TOKEN_FILE.exists():
         config.TOKEN_FILE.write_text(json.dumps({"refresh_token": _env("YT_REFRESH_TOKEN"), "expires_at": 0}),
                                      encoding="utf-8")
     if not config.TOKEN_FILE.exists():

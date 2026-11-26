@@ -151,6 +151,23 @@ def main():
             except Exception as e:
                 log.exception(f"Bulut çalıştırması hata verdi (deneme {attempt + 1}/2): {e}")
         sys.exit(1)
+    elif cmd == "bagla":
+        # Kardeş dil kanalını robota bağlar (GitHub'daki "Kanal: es" kaydından gelir)
+        from robot import youtube
+        name, cid = youtube.link_channel(os.environ.get("KOD", ""))
+        msg = f"✅ Bağlandı: {name} (https://www.youtube.com/channel/{cid}). Robot bu kanala kendi dilinde video yükleyecek."
+        (config.DATA / "son_gorev.txt").write_text(msg, encoding="utf-8")
+        print(msg)
+    elif cmd == "kanal_ayar":
+        # Kanallar sayfası için herkese açık ayar (OAuth istemci kimliği gizli değildir; her giriş adresinde görünür)
+        import json
+        from robot import youtube
+        cid = youtube._client()["client_id"]
+        root = config.ROOT / "veri" / "kanallar"
+        linked = {k: (root / k / "token.enc").exists() for k in ("es", "pt", "id")}
+        (config.ROOT / "docs" / "kanal-config.json").write_text(
+            json.dumps({"client_id": cid, "linked": linked}), encoding="utf-8")
+        print("Kanal ayarı yazıldı:", linked)
     elif cmd == "baslat":
         cmd_baslat()
     elif cmd == "durum":

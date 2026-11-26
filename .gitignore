@@ -3,3 +3,7 @@ veri/*
 .env
 client_secret.json
 __pycache__/
+veri/kanallar/*/youtube_token.json
+veri/kanallar/*/calisma/
+veri/kanallar/*/videolar/
+veri/kanallar/*/loglar/

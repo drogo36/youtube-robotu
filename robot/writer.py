@@ -9,7 +9,8 @@ from . import config, db
 from .log import log
 
 API_URL = "https://api.anthropic.com/v1/messages"
-LANG_NAME = {"en": "English", "tr": "Turkish"}
+LANG_NAME = {"en": "English", "tr": "Turkish", "es": "Latin American Spanish", "pt": "Brazilian Portuguese",
+             "id": "Indonesian", "hi": "Hindi"}
 
 
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -142,6 +143,17 @@ FORMATS = [
 ]
 
 
+def _lang_rule(lang):
+    """İngilizce dışındaki kardeş kanallar için: her şey o dilde, doğal ve yerel."""
+    if config.LANGUAGE == "en":
+        return ""
+    return (f"LANGUAGE (critical): this channel's audience speaks {lang}. Write the script, title, description, headline, "
+            f"tiktok_caption and the comment question natively in {lang}, the way a young local gaming creator talks "
+            f"(not a translation). Translate the fixed phrases too: 'Respawn verdict:' and 'Follow for more.' become "
+            f"natural {lang} equivalents. Use local hashtags of that country plus global ones. Tags: mix {lang} and English. "
+            f"pexels_queries and image_prompts stay in ENGLISH. Skip any line about deal links.\n")
+
+
 def write_video(story, related, task=""):
     import random
     from . import office
@@ -163,6 +175,7 @@ Video format for this one: {fmt_rule}
 {office.strategy_brief()}
 {("Channel owner's assignment for this video (follow it; it may be in Turkish, but write the video in " + lang + "): " + task) if task else ""}
 
+{_lang_rule(lang)}
 Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches and comments worldwide):
 - Use ONLY facts present in these headlines. If something is a leak/rumor, say so clearly.
 - Script about {words} words (~{config.TARGET_SECONDS} seconds spoken). Very short punchy sentences (max 10 words). No emojis, no hashtags, no stage directions.

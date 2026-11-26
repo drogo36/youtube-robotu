@@ -11,7 +11,8 @@ from . import config, db
 from .log import log
 
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 Safari/605.1.15"}
-NEWS_LANG = {"en": ("en-US", "US", "US:en"), "tr": ("tr", "TR", "TR:tr")}
+NEWS_LANG = {"en": ("en-US", "US", "US:en"), "tr": ("tr", "TR", "TR:tr"), "es": ("es-419", "MX", "MX:es-419"),
+             "pt": ("pt-BR", "BR", "BR:pt-419"), "id": ("id", "ID", "ID:id"), "hi": ("hi", "IN", "IN:hi")}
 
 
 def _rss(url):

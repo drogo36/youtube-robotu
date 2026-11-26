@@ -60,7 +60,8 @@ def save(st):
     pub = {"log": st["log"][-40:], "strategy": st.get("strategy", {}),
            "videos": [{k: v.get(k) for k in ("id", "title", "format", "views", "date", "score")} for v in st["videos"][-60:]]}
     BOARD.parent.mkdir(parents=True, exist_ok=True)
-    (BOARD.parent / "ofis-data.json").write_text(json.dumps(pub, ensure_ascii=False), encoding="utf-8")
+    name = f"kanal-{config.CHANNEL_KEY}-data.json" if config.CHANNEL_KEY else "ofis-data.json"
+    (BOARD.parent / name).write_text(json.dumps(pub, ensure_ascii=False), encoding="utf-8")
 
 
 def note(st, role, text):
@@ -218,6 +219,8 @@ Keep the same JSON keys and only use facts from the headline. Reply ONLY with th
 
 # ------------------------------------------------------------------ Ofis panosu
 def render_board(st=None):
+    if config.CHANNEL_KEY:      # kardeş kanallar ana panoyu ezmez
+        return
     st = st or load()
     e = html.escape
     depts = {}
