@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Respawn Report · Dil Kanalları</title>
+<style>
+  :root { --bg:#0d1020; --card:#171b33; --line:#2a3060; --txt:#eef0ff; --dim:#9aa3d6; --ok:#2ee59d; --acc:#ff5c8a; --btn:#4f6bff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--txt); }
+  header { padding:28px 20px 10px; max-width:720px; margin:auto; }
+  h1 { font-size:24px; margin:0 0 6px; }
+  header p { color:var(--dim); margin:0; line-height:1.5; font-size:15px; }
+  main { max-width:720px; margin:auto; padding:10px 16px 60px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px; margin:18px 0; }
+  .top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .top h2 { margin:0; font-size:19px; }
+  .flag { font-size:28px; margin-right:8px; }
+  .badge { font-size:13px; padding:5px 11px; border-radius:99px; background:#3a2030; color:#ffb3c7; white-space:nowrap; }
+  .badge.ok { background:#123d2e; color:var(--ok); }
+  .meta { color:var(--dim); font-size:14px; margin:8px 0 4px; line-height:1.5; }
+  ol { padding-left:20px; margin:14px 0 0; }
+  li { margin:0 0 18px; line-height:1.55; font-size:15px; }
+  li b { color:#fff; }
+  .btn { display:inline-block; margin-top:8px; padding:11px 16px; border-radius:12px; background:var(--btn); color:#fff;
+         text-decoration:none; font-weight:600; border:0; font-size:15px; cursor:pointer; }
+  .btn.alt { background:#2a3060; }
+  .btn.go { background:var(--acc); }
+  .name { display:inline-block; background:#0d1020; border:1px dashed var(--line); padding:4px 9px; border-radius:8px; font-family:monospace; }
+  textarea { width:100%; min-height:84px; margin-top:8px; border-radius:12px; border:1px solid var(--line); background:#0d1020;
+             color:var(--txt); padding:10px; font-size:14px; }
+  .err { color:#ff8fa8; font-size:14px; margin-top:6px; min-height:1em; }
+  .done { color:var(--ok); font-weight:600; margin-top:10px; }
+  .help { background:#121632; border-radius:14px; padding:16px 18px; color:var(--dim); font-size:14px; line-height:1.6; }
+  a.back { color:var(--dim); font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🌍 Dil Kanalları</h1>
+  <p>Robot her kanala o ülkenin dilinde, kendi seslendirmesiyle ve o ülkenin akşam saatinde günde 2 Short yükler.
+     Her kanal için 3 adımı bir kez yapman yeterli. Bir adım bitince sıradakine geç.</p>
+</header>
+<main>
+  <div id="cards"></div>
+  <div class="help">
+    <b>Bilmen gerekenler</b><br>
+    • 2. adımın sonunda <b>"Bu siteye ulaşılamıyor"</b> sayfası açılır. Bu normaldir, hata değildir. O sayfanın adresi robotun ihtiyaç duyduğu onay kodunu taşır.<br>
+    • Onay kodu <b>10 dakika</b> geçerlidir. 2. ve 3. adımı arka arkaya yap.<br>
+    • GitHub'da açılan kayıt yaklaşık 1 dakika içinde otomatik kapanır ve kod silinir. Kaydın altına "✅ Bağlandı" yazar.<br>
+    • Onay ekranında <b>ana kanalı (Respawn Report)</b> değil, yeni açtığın dil kanalını seç. Yanlış seçersen robot reddeder, baştan denersin.<br><br>
+    <a class="back" href="plaza.html">← Plazaya dön</a>
+  </div>
+</main>
+<script>
+const REPO = "drogo36/youtube-robotu";
+const REDIRECT = "http://127.0.0.1:8765";
+const SCOPES = "https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly";
+const CHANNELS = [
+  { key:"es", flag:"🇲🇽", title:"İspanyolca", name:"Respawn Report Español", who:"Meksika, İspanya, Arjantin, Kolombiya, ABD'deki İspanyolca konuşanlar · ~550 milyon kişi" },
+  { key:"pt", flag:"🇧🇷", title:"Portekizce", name:"Respawn Report Brasil", who:"Brezilya ve Portekiz · YouTube'un en çok oyun izlenen ülkelerinden" },
+  { key:"id", flag:"🇮🇩", title:"Endonezce", name:"Respawn Report Indonesia", who:"Endonezya · mobil oyun (Mobile Legends, Free Fire) izleyicisi çok büyük" },
+];
+let cfg = { client_id:"", linked:{} };
+
+function authUrl(key) {
+  const p = new URLSearchParams({ client_id:cfg.client_id, redirect_uri:REDIRECT, response_type:"code", scope:SCOPES,
+    access_type:"offline", prompt:"select_account consent", include_granted_scopes:"true", state:key });
+  return "https://accounts.google.com/o/oauth2/v2/auth?" + p.toString();
+}
+
+function render() {
+  document.getElementById("cards").innerHTML = CHANNELS.map(c => {
+    const ok = cfg.linked && cfg.linked[c.key];
+    return `<div class="card">
+      <div class="top"><h2><span class="flag">${c.flag}</span>${c.title}</h2>
+        <span class="badge ${ok ? "ok" : ""}">${ok ? "✅ Bağlı · çalışıyor" : "Bağlı değil"}</span></div>
+      <div class="meta">${c.who}</div>
+      ${ok ? `<div class="done">Robot bu kanala kendiliğinden video yüklüyor. Yapman gereken bir şey yok.</div>` : `
+      <ol>
+        <li><b>Kanalı aç.</b> Düğmeye bas, açılan YouTube sayfasında <b>"Kanal oluştur"</b>a dokun ve adına şunu yaz:
+          <span class="name">${c.name}</span><br>
+          <a class="btn alt" href="https://www.youtube.com/channel_switcher" target="_blank" rel="noopener">1 · YouTube'da kanal aç</a>
+          <button class="btn alt" onclick="navigator.clipboard.writeText('${c.name}');this.textContent='Ad kopyalandı ✓'">Adı kopyala</button></li>
+        <li><b>Robota izin ver.</b> Google hesabını (ilancreator36) seç, sonra kanal listesinden <b>${c.name}</b>'ı seç ve <b>İzin ver</b>'e dokun.
+          "Bu uygulama doğrulanmadı" uyarısı çıkarsa <b>Gelişmiş → Devam et</b>'e dokun.<br>
+          ${cfg.client_id ? `<a class="btn" href="${authUrl(c.key)}" target="_blank" rel="noopener">2 · Robota bağla</a>`
+                          : `<span class="err">Sayfa ayarı yükleniyor, birkaç dakika sonra sayfayı yenile.</span>`}</li>
+        <li><b>Adresi gönder.</b> "Bu siteye ulaşılamıyor" sayfasında adres çubuğuna dokun, adresin tamamını kopyala ve buraya yapıştır:
+          <textarea id="u_${c.key}" placeholder="http://127.0.0.1:8765/?state=${c.key}&code=..."></textarea>
+          <div class="err" id="e_${c.key}"></div>
+          <button class="btn go" onclick="send('${c.key}')">3 · Gönder</button>
+          <div class="meta">GitHub açılır, yeşil <b>"Create"</b> (Oluştur) düğmesine dokun. Bitti.</div></li>
+      </ol>`}
+    </div>`;
+  }).join("");
+}
+
+function send(key) {
+  const v = document.getElementById("u_" + key).value.trim();
+  const e = document.getElementById("e_" + key);
+  if (!/[?&]code=/.test(v)) { e.textContent = "Bu adreste onay kodu yok. Adres çubuğundaki adresin tamamını kopyala."; return; }
+  const st = (v.match(/[?&]state=([a-z]+)/) || [])[1];
+  if (st && st !== key) { e.textContent = "Bu adres başka bir kanala ait (" + st + "). O kanalın kutusuna yapıştır."; return; }
+  e.textContent = "";
+  const url = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent("Kanal: " + key)}&body=${encodeURIComponent(v)}`;
+  window.open(url, "_blank");
+}
+
+fetch("kanal-config.json?" + Date.now()).then(r => r.ok ? r.json() : cfg).then(j => { cfg = j || cfg; render(); }).catch(render);
+render();
+</script>
+</body>
+</html>

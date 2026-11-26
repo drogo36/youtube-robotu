@@ -1,0 +1,112 @@
+name: Dil Kanalları
+
+on:
+  schedule:
+    # Her kanal kendi ülkesinin akşam saatlerinde yükler (GitHub saatleri UTC)
+    - cron: "20 10 * * *"   # Endonezya 17:20
+    - cron: "20 12 * * *"   # Endonezya 19:20
+    - cron: "40 22 * * *"   # Brezilya 19:40 · Meksika 16:40
+    - cron: "10 1 * * *"    # Brezilya 22:10 · Meksika 19:10
+  workflow_dispatch:
+    inputs:
+      kanal:
+        description: "Hangi kanal?"
+        type: choice
+        options: [hepsi, es, pt, id]
+        default: hepsi
+
+permissions:
+  contents: write
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 1        # Gemini ücretsiz sınırını aşmamak için kanallar sırayla çalışır
+      matrix:
+        include:
+          - kanal: es
+            geo: MX
+            lang: es
+            name: "Respawn Report Español"
+            geos: "MX,US,ES,AR,CO,CL,PE"
+            extra: "Free Fire,Clash Royale,Brawl Stars"
+            slots: "22 1"
+          - kanal: pt
+            geo: BR
+            lang: pt
+            name: "Respawn Report Brasil"
+            geos: "BR,PT"
+            extra: "Free Fire,Roblox Brasil,Clash Royale,Brawl Stars"
+            slots: "22 1"
+          - kanal: id
+            geo: ID
+            lang: id
+            name: "Respawn Report Indonesia"
+            geos: "ID"
+            extra: "Mobile Legends,Free Fire,PUBG Mobile,Genshin Impact"
+            slots: "10 12"
+    env:
+      TZ: Europe/Istanbul
+      CHANNEL_KEY: ${{ matrix.kanal }}
+      LANGUAGE: ${{ matrix.lang }}
+      CHANNEL_NAME: ${{ matrix.name }}
+      TRENDS_GEO: ${{ matrix.geo }}
+      TRENDS_GEOS: ${{ matrix.geos }}
+      EXTRA_KEYWORDS: ${{ matrix.extra }}
+      LOCALIZE_LANGS: "en"
+      VIDEOS_PER_DAY: "2"
+      ACTIVE_START_HOUR: "0"
+      ACTIVE_END_HOUR: "24"
+      PRIVACY: public
+      GEMINI_MODEL: gemini-flash-lite-latest
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+      YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+      YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sıra bu kanalda mı?
+        id: sira
+        run: |
+          GO=1
+          [ -f "veri/kanallar/$CHANNEL_KEY/token.enc" ] || { echo "Kanal henüz bağlanmadı, atlanıyor."; GO=0; }
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            K="${{ inputs.kanal }}"; [ "$K" = "hepsi" ] || [ "$K" = "$CHANNEL_KEY" ] || GO=0
+          else
+            H=$(date -u +%H); OK=0
+            for s in ${{ matrix.slots }}; do d=$(( (10#$H - s + 24) % 24 )); [ $d -le 2 ] && OK=1; done
+            [ $OK = 1 ] || { echo "Bu saat bu kanalın yayın saati değil."; GO=0; }
+          fi
+          echo "go=$GO" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@v5
+        if: steps.sira.outputs.go == '1'
+        with:
+          python-version: "3.12"
+
+      - name: Programları kur
+        if: steps.sira.outputs.go == '1'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core > /dev/null
+          pip install -q -r requirements.txt
+
+      - name: Video üret ve yükle
+        if: steps.sira.outputs.go == '1'
+        run: python main.py bulut
+        env:
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
+
+      - name: Hafızayı kaydet
+        if: always() && steps.sira.outputs.go == '1'
+        run: |
+          rm -f "veri/kanallar/$CHANNEL_KEY/youtube_token.json"
+          git config user.name "youtube-robotu"
+          git config user.email "robot@users.noreply.github.com"
+          git add -f "veri/kanallar/$CHANNEL_KEY/robot.db" "veri/kanallar/$CHANNEL_KEY/ofis.json" "docs/kanal-$CHANNEL_KEY-data.json" 2>/dev/null || true
+          git commit -q -m "robot ($CHANNEL_KEY): hafıza güncellendi" || echo "değişiklik yok"
+          for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q && break; sleep $((i*7)); done || echo "push yapılamadı"
