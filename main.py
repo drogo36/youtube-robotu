@@ -132,7 +132,7 @@ def main():
             office.daily_review()   # Kanal Müdürü: günde bir kez izlenmeleri inceler, stratejiyi günceller
         except Exception as e:
             print(f"Ofis toplantısı atlandı: {e}")
-        limit = 5 if os.environ.get("FORCE") == "1" else config.VIDEOS_PER_DAY  # elle çalıştırmada 2 ek video hakkı
+        limit = 7 if os.environ.get("FORCE") == "1" else config.VIDEOS_PER_DAY  # elle çalıştırmada 2 ek video hakkı
         if db.uploads_today() >= limit:
             print("Bugünün video kotası dolu, atlanıyor.")
             return
