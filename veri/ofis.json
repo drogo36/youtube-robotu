@@ -1,20 +1,20 @@
 {
  "strategy": {
-  "summary_tr": "GTA 6 başlıklı tekrara düşen içerikler izleyicide karşılık bulmazken, Switch 2 haberleri ve net indirim oranları içeren '3things' ve 'breaking' formatları daha istikrarlı izlenme aldı. Özellikle donanım indirimleri ve net fiyat odaklı videolar kanalın performansını yukarı taşıyor.",
+  "summary_tr": "Switch 2, GTA 6 donanım etkileri ve OLED monitör indirimleri yüksek izlenme alırken, yalın ve detaysız fiyat duyuruları zayıf kaldı. İzleyicilerin bağ kurabileceği, haber ve fırsatı harmanlayan dinamik formatlar kanalın performansını yukarı taşıyor.",
   "decisions_tr": [
-   "Spekülatif GTA 6 içeriklerini tamamen bırakıp sadece donanım/satış etkilerine odaklanacağız.",
-   "Amazon gelirini artırmak için en iyi fırsatları tek video altında '3things' formatıyla derleyeceğiz.",
-   "Tüm yeni videolarda mutlaka izin verilen (breaking, 3things, versus) formatlardan birini kullanacağız."
+   "Sadece kuru fiyat veren videolar yerine '3things' ve 'breaking' formatlarında oyuncuya sağladığı faydayı öne çıkaran kurgular yapacağız.",
+   "GTA 6'nın konsol kıtlığı ve donanım talebi üzerindeki etkilerini işlemeye devam edeceğiz.",
+   "Nintendo Switch 2 sızıntılarını ve olası fiyat detaylarını güçlü kancalarla sunacağız."
   ],
   "focus": [
    "Nintendo Switch 2",
-   "GPU ve Oyuncu Laptopu İndirimleri",
-   "OLED Monitör Fırsatları",
-   "GTA 6 Donanım Etkisi"
+   "GTA 6 Donanım Etkisi",
+   "OLED Monitörler",
+   "PC Gaming Donanımları"
   ],
   "avoid": [
-   "Kanıtlanmamış veya tekrarlayan GTA 6 sızıntıları",
-   "Format etiketi bulunmayan ham duyurular"
+   "İçerik derinliği olmayan tekil ürün fiyat duyuruları",
+   "Aşırı spekülatif, kanıtsız başlıklar"
   ],
   "prefer_formats": [
    "3things",
@@ -22,14 +22,14 @@
    "versus"
   ],
   "hook_tips": [
-   "İlk 2 saniyede doğrudan net fiyatı veya indirim oranını ekranda göster.",
-   "Oyuncunun bu indirimden veya haberden sağladığı faydayı anında netleştir."
+   "İlk 2 saniyede oyuncunun cihazda veya bütçesinde yaşayacağı değişimi doğrudan göster.",
+   "Net bir soru veya şaşırtıcı bir veri ile izleyicinin akışta kalmasını sağla."
   ],
   "title_tips": [
-   "Başlıklarda mutlaka net bir miktar, oran veya para birimi kullan.",
-   "Emojileri başlığın sonunda tek adetle sınırlandırarak güvenilirlik algısını artır."
+   "Başlıklarda net rakamlar ve para birimi kullanarak güven ver.",
+   "Emoji kullanımını başlığın sonunda tek bir simgeyle sınırlandır."
   ],
-  "date": "2026-11-27T02:48"
+  "date": "2026-11-28T02:24"
  },
  "videos": [
   {
@@ -41,7 +41,7 @@
    "score": null,
    "date": "2026-11-20 07:16",
    "views": 0,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "Z0SK0bfZrXg",
@@ -52,7 +52,7 @@
    "score": null,
    "date": "2026-11-20 07:37",
    "views": 676,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "nYPGLl1Uitw",
@@ -63,7 +63,7 @@
    "score": null,
    "date": "2026-11-20 20:49",
    "views": 60,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "yoTFeesvCKY",
@@ -74,7 +74,7 @@
    "score": null,
    "date": "2026-11-21 00:28",
    "views": 1,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "AdIdR9nwjMg",
@@ -85,7 +85,7 @@
    "score": null,
    "date": "2026-11-21 02:27",
    "views": 0,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "gVu6yVVWv1I",
@@ -96,7 +96,7 @@
    "score": null,
    "date": "2026-11-21 15:00",
    "views": 118,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "ydWLY-TzSZo",
@@ -107,7 +107,7 @@
    "score": null,
    "date": "2026-11-22 00:59",
    "views": 263,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "3aIwXbEVwHg",
@@ -117,8 +117,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-22 04:16",
-   "views": 21,
-   "checked": "2026-11-27 02:48"
+   "views": 22,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "UBWKeOpfBXg",
@@ -129,7 +129,7 @@
    "score": null,
    "date": "2026-11-22 11:11",
    "views": 52,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "PNOiWCk95XA",
@@ -140,7 +140,7 @@
    "score": null,
    "date": "2026-11-23 00:09",
    "views": 32,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "2ZULUxpa4ok",
@@ -151,7 +151,7 @@
    "score": null,
    "date": "2026-11-23 03:30",
    "views": 14,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "owHuxzlRE6I",
@@ -162,7 +162,7 @@
    "score": null,
    "date": "2026-11-23 12:17",
    "views": 15,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "2ZzLj7rD7x8",
@@ -172,8 +172,8 @@
    "deal": false,
    "score": null,
    "date": "2026-11-24 05:14",
-   "views": 123,
-   "checked": "2026-11-27 02:48"
+   "views": 121,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "4s_y59fTO_s",
@@ -184,7 +184,7 @@
    "score": null,
    "date": "2026-11-24 08:23",
    "views": 108,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "1EK2le4LGXQ",
@@ -195,7 +195,7 @@
    "score": null,
    "date": "2026-11-24 12:49",
    "views": 21,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "SiegfGEa48s",
@@ -205,8 +205,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-25 00:13",
-   "views": 296,
-   "checked": "2026-11-27 02:48"
+   "views": 295,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "aEhnV6kF6fE",
@@ -217,7 +217,7 @@
    "score": 7,
    "date": "2026-11-25 04:10",
    "views": 8,
-   "checked": "2026-11-27 02:48"
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "R82DpUtnrlU",
@@ -227,8 +227,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-25 08:49",
-   "views": 33,
-   "checked": "2026-11-27 02:48"
+   "views": 44,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "lh7jQbnf4pI",
@@ -238,8 +238,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-26 02:42",
-   "views": 73,
-   "checked": "2026-11-27 02:48"
+   "views": 74,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "5QzGWkJphJA",
@@ -249,8 +249,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-26 06:37",
-   "views": 88,
-   "checked": "2026-11-27 02:48"
+   "views": 115,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "aZE_CGaxdaM",
@@ -260,8 +260,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-26 12:51",
-   "views": 32,
-   "checked": "2026-11-27 02:48"
+   "views": 41,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "M7MscHwhlcs",
@@ -271,7 +271,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-27 02:54",
-   "views": 0
+   "views": 18,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "ZxTrLvbcnrg",
@@ -281,7 +282,8 @@
    "deal": true,
    "score": 7,
    "date": "2026-11-27 06:43",
-   "views": 0
+   "views": 25,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "JJwY2oUfMaM",
@@ -291,7 +293,8 @@
    "deal": true,
    "score": 8,
    "date": "2026-11-27 12:49",
-   "views": 0
+   "views": 25,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "NeJsbX9fpK0",
@@ -301,7 +304,8 @@
    "deal": true,
    "score": 9,
    "date": "2026-11-27 19:09",
-   "views": 0
+   "views": 36,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "bCJo0YeLDzg",
@@ -311,7 +315,8 @@
    "deal": false,
    "score": 7,
    "date": "2026-11-27 19:16",
-   "views": 0
+   "views": 32,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "SmzvYXo5PEo",
@@ -321,7 +326,8 @@
    "deal": false,
    "score": 9,
    "date": "2026-11-27 19:23",
-   "views": 0
+   "views": 80,
+   "checked": "2026-11-28 02:24"
   },
   {
    "id": "tXu7aXmq-zo",
@@ -331,6 +337,17 @@
    "deal": false,
    "score": 7,
    "date": "2026-11-27 19:58",
+   "views": 9,
+   "checked": "2026-11-28 02:24"
+  },
+  {
+   "id": "pNJpDWHNl7U",
+   "title": "Roblox Had A Secret Chinese Version 🇨🇳 #roblox #gaming #shorts",
+   "format": "didyouknow",
+   "topic": "Roblox",
+   "deal": false,
+   "score": 8,
+   "date": "2026-11-28 02:29",
    "views": 0
   }
  ],
@@ -539,6 +556,26 @@
    "t": "2026-11-27 19:58",
    "role": "Yayın Yönetmeni",
    "text": "Yayına onay verildi: GTA 6 Pirate Port Survivor Defies Take-Two 💻 #gta6 #gaming #shorts"
+  },
+  {
+   "t": "2026-11-28 02:24",
+   "role": "Veri Analisti",
+   "text": "28 videonun güncel izlenmesi toplandı"
+  },
+  {
+   "t": "2026-11-28 02:24",
+   "role": "Kanal Müdürü",
+   "text": "Günlük strateji toplantısı: Sadece kuru fiyat veren videolar yerine '3things' ve 'breaking' formatlarında oyuncuya sağladığı faydayı öne çıkaran kurgular yapacağız.; GTA 6'nın konsol kıtlığı ve donanım talebi üzerindeki etkilerini işlemeye devam edeceğiz.; Nintendo Switch 2 sızıntılarını ve olası fi"
+  },
+  {
+   "t": "2026-11-28 02:24",
+   "role": "Yayın Kurulu Başkanı",
+   "text": "8/10 ile onaylandı: Roblox Had A Secret Chinese Version 🇨🇳 #roblox #gaming #shorts"
+  },
+  {
+   "t": "2026-11-28 02:29",
+   "role": "Yayın Yönetmeni",
+   "text": "Yayına onay verildi: Roblox Had A Secret Chinese Version 🇨🇳 #roblox #gaming #shorts"
   }
  ],
  "reviews": [
@@ -567,6 +604,15 @@
     "Spekülatif GTA 6 içeriklerini tamamen bırakıp sadece donanım/satış etkilerine odaklanacağız.",
     "Amazon gelirini artırmak için en iyi fırsatları tek video altında '3things' formatıyla derleyeceğiz.",
     "Tüm yeni videolarda mutlaka izin verilen (breaking, 3things, versus) formatlardan birini kullanacağız."
+   ]
+  },
+  {
+   "date": "2026-11-28T02:24",
+   "summary": "Switch 2, GTA 6 donanım etkileri ve OLED monitör indirimleri yüksek izlenme alırken, yalın ve detaysız fiyat duyuruları zayıf kaldı. İzleyicilerin bağ kurabileceği, haber ve fırsatı harmanlayan dinamik formatlar kanalın performansını yukarı taşıyor.",
+   "decisions": [
+    "Sadece kuru fiyat veren videolar yerine '3things' ve 'breaking' formatlarında oyuncuya sağladığı faydayı öne çıkaran kurgular yapacağız.",
+    "GTA 6'nın konsol kıtlığı ve donanım talebi üzerindeki etkilerini işlemeye devam edeceğiz.",
+    "Nintendo Switch 2 sızıntılarını ve olası fiyat detaylarını güçlü kancalarla sunacağız."
    ]
   }
  ]
