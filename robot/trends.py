@@ -112,7 +112,9 @@ def evergreen_story():
         if db.is_seen(key):
             continue
         try:
-            r = requests.get("https://en.wikipedia.org/w/api.php", headers=UA, timeout=20, params={
+            r = requests.get("https://en.wikipedia.org/w/api.php", timeout=20, headers={
+                "User-Agent": "RespawnReportBot/1.0 (https://github.com/drogo36/youtube-robotu; robot@users.noreply.github.com)"},
+                params={
                 "action": "query", "prop": "extracts", "explaintext": 1, "redirects": 1,
                 "titles": game, "format": "json"})
             pages = r.json().get("query", {}).get("pages", {})
