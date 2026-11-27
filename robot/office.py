@@ -198,8 +198,9 @@ Title: {data.get('title')}
 Script: {data.get('script')}
 
 Criteria: hook strength in the first 6 words, retention/pacing, original insight ("Respawn verdict"), factual safety
-(nothing beyond the headline; rumors labeled), clarity for a global audience, title curiosity without clickbait lies.
-{strategy_brief()}
+(nothing beyond the headline{" and the reference text" if story.get("context") else ""}; rumors labeled), clarity for a global audience, title curiosity without clickbait lies.
+The TOPIC IS FIXED and already approved: judge only how well the script tells THIS story. Never score it down for its
+topic, never suggest a different topic, game or product.
 
 Reply ONLY with JSON: {{"score": <1-10>, "problems": ["..."], "fix_instructions": "<how to rewrite, specific>"}}"""
     try:
@@ -217,9 +218,15 @@ Reply ONLY with JSON: {{"score": <1-10>, "problems": ["..."], "fix_instructions"
     try:
         fix = f"""Rewrite this YouTube Short JSON following the editorial board's instructions exactly.
 Instructions: {r.get('fix_instructions')}
-Keep the same JSON keys and only use facts from the headline. Reply ONLY with the full JSON.
+The video MUST stay about exactly this story: {story.get('title')}
+Keep the same JSON keys and only use facts from the headline{" and this reference text:" + chr(10) + story["context"][:4000] if story.get("context") else ""}. Reply ONLY with the full JSON.
 {json.dumps({k: data[k] for k in ('title', 'description', 'tags', 'headline', 'script') if k in data}, ensure_ascii=False)}"""
         new = writer._json(writer.ask_claude(fix, 2500, writer.SYSTEM))
+        # güvenlik: yeniden yazım konuyu değiştirdiyse ilk sürüm kalır
+        key = str(story.get("topic") or story.get("keyword") or "").lower().split(" (")[0]
+        words = [w for w in key.replace(":", " ").split() if len(w) > 3][:2]
+        if words and not any(w in (str(new.get("title", "")) + str(new.get("script", ""))).lower() for w in words):
+            raise ValueError("yeniden yazım konudan saptı")
         for k in ("title", "description", "tags", "headline", "script"):
             if new.get(k):
                 data[k] = new[k]
