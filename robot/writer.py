@@ -104,7 +104,9 @@ def choose_topic(candidates, trending, task=""):
     if task:
         brief += (f"\nTHE CHANNEL OWNER GAVE THIS ASSIGNMENT (top priority, may be in Turkish): {task}\n"
                   "Pick the story that best fulfils it. Only return -1 if nothing at all is related.\n")
+    perf = office.performance_brief()
     prompt = f"""{brief}
+{perf}
 Pick the ONE story that will get the most views as a YouTube Short right now for a gaming/tech audience.
 
 Fresh headlines:
@@ -118,7 +120,10 @@ Videos we already published this week (do NOT repeat the same story):
 Rising searches are tagged with their country code: a story that is rising in several big markets (US, India, Brazil,
 Indonesia, Mexico, Philippines...) has the biggest worldwide view potential — prefer it.
 Prefer: stories with GLOBAL appeal that people in many countries would stop scrolling for (huge franchises, viral moments, shocking numbers, surprising tech, free stuff, big release dates, trailers, leaks with big buzz).
-MONEY RULE: we earn Amazon affiliate commission when a video is about something viewers can BUY (consoles, games, phones, accessories, deals, price drops). Late November to mid December is Black Friday / Cyber Monday / holiday shopping season: in this period strongly prefer real deal and price-drop stories about popular products (but never invent a deal; only use what the headline says). At least every second video should be a buyable-product story when one is available.
+VIEWS FIRST (learned from our real data): plain deal/price-drop videos get almost no views on Shorts (often under 30).
+Our winners were curiosity stories: leaks, surprising crossovers, shocking records, controversies, "is this real?" moments.
+Only pick a deal story if it is EXTRAORDINARY (a hugely popular product at a historic low that everyone talks about), and
+never two deal videos in a row.
 VARIETY RULE: our recent videos are listed above. Do NOT pick the same game/franchise/company as our last 3 videos unless it is truly massive breaking news. Rotate between games, consoles, phones, AI and tech so the channel never feels repetitive.
 Avoid: duplicates of what we published, minor/boring news, anything not gaming/tech.
 
@@ -160,6 +165,8 @@ def write_video(story, related, task=""):
     pref = [f for f in FORMATS if f[0] in office.preferred_formats()]
     # Kanal Müdürünün seçtiği tarzlar %70 ağırlıkla, diğerleri denemeye devam (öğrenmek için)
     fmt_name, fmt_rule = random.choice(pref) if pref and random.random() < 0.7 else random.choice(FORMATS)
+    if story.get("evergreen"):
+        fmt_name, fmt_rule = next(f for f in FORMATS if f[0] == "didyouknow")
     log.info(f"Video tarzı: {fmt_name}")
     lang = LANG_NAME.get(config.LANGUAGE, "English")
     words = int(config.TARGET_SECONDS * (2.6 if config.LANGUAGE == "en" else 2.1))
@@ -172,18 +179,19 @@ Related headlines from other outlets (use them to cross-check facts):
 {sources}
 
 Video format for this one: {fmt_rule}
+{("REFERENCE TEXT (Wikipedia). Pick the 3 most surprising, little-known facts from it that would make a gamer say 'wait, what?'. Every fact must be stated in this text; never add outside facts, numbers or dates:" + chr(10) + story["context"]) if story.get("context") else ""}
 {office.strategy_brief()}
 {("Channel owner's assignment for this video (follow it; it may be in Turkish, but write the video in " + lang + "): " + task) if task else ""}
 
 {_lang_rule(lang)}
 Rules (this is for the YouTube Shorts algorithm: maximize retention, rewatches and comments worldwide):
-- Use ONLY facts present in these headlines. If something is a leak/rumor, say so clearly.
+- Use ONLY facts present in these headlines{" and the reference text below" if story.get("context") else ""}. If something is a leak/rumor, say so clearly.
 - Script about {words} words (~{config.TARGET_SECONDS} seconds spoken). Very short punchy sentences (max 10 words). No emojis, no hashtags, no stage directions.
 - HOOK: the first 6 words must create instant curiosity or shock (a bold claim, a surprising number, or a question). Never start with "Hey guys", "Today", "In this video" or the channel name.
 - Pacing: a new fact or twist every 1-2 sentences. Use concrete numbers and comparisons people can feel ("more than double", "in just 24 hours").
 - ORIGINALITY (very important, YouTube demonetizes generic mass-produced videos): add real analysis a fan would not get from the headline alone: why it matters for players, what it compares to, what is likely next. Include exactly one line that starts with "Respawn verdict:" giving our honest, specific opinion. Never pad, never repeat the headline in other words.
 - End with a short question that makes people comment, then a final sentence that loops naturally back to the hook (so the Short replays seamlessly). Do NOT add a long outro; at most "Follow for more." before the loop line.
-- Title: max 60 characters before the hashtags, written for a global audience, curiosity + main keyword first, honest (no fake claims), 1 emoji max. End the title with 2 relevant hashtags plus #shorts (e.g. " #gta6 #gaming #shorts").
+- Title: max 55 characters before the hashtags, written for a global audience. Make it a CURIOSITY GAP: tease the surprising part without giving it away ("Minecraft Was Almost Called This", "Nobody Noticed This In GTA 5"), main game/brand name in the first 3 words, honest (no fake claims), 1 emoji max. Never a plain price headline. End the title with 2 relevant hashtags plus #shorts (e.g. " #gta6 #gaming #shorts").
 - Description: 2 sentences summary in {lang}, then a line "Sources: " listing outlet names, then a line with 10-12 popular, relevant hashtags (mix of broad ones like #gaming #shorts #viral #fyp #gamer and specific ones for this story). Never more than 12 hashtags.
 - Tags: 15 high-search-volume tags people actually type (broad + specific, include common misspellings/short forms like "gta vi").
 - headline: 2-4 word ALL CAPS on-screen banner that teases the story (curiosity, not a summary).

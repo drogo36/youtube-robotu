@@ -21,6 +21,12 @@ def _cleanup_outputs(keep=30):
 
 
 def make_one(upload=True, task=""):
+    import random
+    if not task and random.random() < config.EVERGREEN_SHARE:
+        story = trends.evergreen_story()
+        if story:
+            log.info(f"Her zaman izlenen konu: {story['topic']} (Wikipedia bilgileriyle)")
+            return _produce(story, [], upload, task)
     candidates, trending = trends.collect()
     if task:   # sahibinin plazadan verdiği görev: önce o konudaki haberler
         office.task_received(task)
@@ -35,6 +41,10 @@ def make_one(upload=True, task=""):
         log.info("Claude yeterince iyi bir konu bulamadı, bu tur atlanıyor")
         return None
     related = [a for a in trends.articles_for_topic(story["topic"]) if a["link"] != story["link"]]
+    return _produce(story, related, upload, task)
+
+
+def _produce(story, related, upload, task):
     data = writer.write_video(story, related, task=task)
     data = office.qa_review(story, data)   # Yayın Kurulu: puanla, zayıfsa yeniden yazdır
     log.info(f"Başlık: {data['title']}")

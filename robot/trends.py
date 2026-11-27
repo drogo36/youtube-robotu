@@ -98,3 +98,34 @@ def articles_for_topic(topic, limit=6):
     """Seçilen konu için ek haber başlıkları (doğrulama ve zengin içerik için)."""
     time.sleep(3)
     return google_news(topic, max_age_hours=72)[:limit]
+
+
+def evergreen_story():
+    """Dev oyunlar hakkında "bunu bilmiyordun" videosu için Wikipedia'dan doğrulanmış bilgi parçası."""
+    import random
+    from datetime import datetime
+    games = list(config.EVERGREEN_GAMES)
+    random.shuffle(games)
+    week = datetime.now().strftime("%G-%V")
+    for game in games[:8]:
+        key = f"wiki:{game}:{week}"
+        if db.is_seen(key):
+            continue
+        try:
+            r = requests.get("https://en.wikipedia.org/w/api.php", headers=UA, timeout=20, params={
+                "action": "query", "prop": "extracts", "explaintext": 1, "redirects": 1,
+                "titles": game, "format": "json"})
+            pages = r.json().get("query", {}).get("pages", {})
+            text = next(iter(pages.values()), {}).get("extract", "")
+        except Exception as e:
+            log.warning(f"Wikipedia okunamadı ({game}): {e}")
+            continue
+        text = "\n".join(l for l in text.splitlines() if l.strip() and not l.startswith("=="))
+        if len(text) < 3000:
+            continue
+        start = random.randint(0, max(0, len(text) - 7000))   # her seferinde makalenin farklı bir bölümü
+        name = game.split(" (")[0]
+        return {"title": f"{name}: surprising facts most players never knew", "link": key, "source": "Wikipedia",
+                "published": "", "keyword": name, "topic": name, "evergreen": True,
+                "context": text[:1500] + "\n...\n" + text[start:start + 5500]}
+    return None

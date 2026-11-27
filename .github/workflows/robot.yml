@@ -18,9 +18,9 @@ on:
   workflow_dispatch:   # Actions sekmesinden elle "Run workflow" ile de çalıştırılabilir
     inputs:
       mode:
-        description: "kisa = Shorts, uzun = haftalık uzun video"
+        description: "kisa = Shorts, uzun = haftalık uzun video, bilgi = 'bunu bilmiyordun' Short'u"
         type: choice
-        options: [kisa, uzun]
+        options: [kisa, uzun, bilgi]
         default: kisa
 
 permissions:
@@ -75,6 +75,7 @@ jobs:
         env:
           FORCE: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'issues') && '1' || '0' }}
           TASK: ${{ github.event.issue.body || github.event.issue.title }}
+          EVERGREEN_SHARE: ${{ inputs.mode == 'bilgi' && '1' || '0.4' }}
 
       - name: Görevi yanıtla
         if: always() && github.event_name == 'issues'

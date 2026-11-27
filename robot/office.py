@@ -64,6 +64,18 @@ def save(st):
     (BOARD.parent / name).write_text(json.dumps(pub, ensure_ascii=False), encoding="utf-8")
 
 
+def performance_brief():
+    """Konu seçen yapay zekâya kanalın gerçek izlenme verisi: en iyi ve en kötü videolar."""
+    vids = [v for v in load().get("videos", []) if v.get("id") and v.get("views") is not None][-40:]
+    if len(vids) < 5:
+        return ""
+    vids = sorted(vids, key=lambda v: -(v.get("views") or 0))
+    top = "\n".join(f"  {v['views']} views: {v.get('title')}" for v in vids[:5])
+    low = "\n".join(f"  {v['views']} views: {v.get('title')}" for v in vids[-5:])
+    return (f"OUR REAL RESULTS. Best performers (make more stories LIKE THESE):\n{top}\n"
+            f"Worst performers (avoid stories like these):\n{low}\n")
+
+
 def note(st, role, text):
     st.setdefault("log", []).append({"t": datetime.now().strftime("%Y-%m-%d %H:%M"), "role": role, "text": text[:300]})
     log.info(f"[Ofis] {role}: {text[:160]}")
@@ -147,6 +159,9 @@ Our recent videos with their real view counts (newer videos have had less time):
 
 Previous strategy: {json.dumps(st.get('strategy', {}), ensure_ascii=False)[:1500]}
 
+Judge by the BEST performers: never tell the team to stop a topic/franchise that produced one of our top videos;
+a 0-view video is usually a near-duplicate or bad timing, not proof the topic is dead. Plain deal/price videos
+under-perform badly on Shorts: views come first (no views = no sales either).
 Analyse what performs above our average and what under-performs (topics, formats, titles, hooks, deal vs news).
 Make concrete decisions for the next 24 hours. Be specific, short, practical.
 Allowed formats: breaking, 3things, didyouknow, versus, hottake.

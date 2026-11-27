@@ -63,7 +63,7 @@ DEAL_KEYWORDS = [k.strip() for k in _get(
     "Black Friday gaming deals,PS5 deal,Nintendo Switch 2 deal,Xbox deal,video game price drop,"
     "gaming headset deal,iPhone deal,Samsung Galaxy deal,gaming monitor deal,Steam Deck deal",
 ).split(",") if k.strip()]
-DEALS_PER_RUN = _int("DEALS_PER_RUN", 3)  # her turda bakılacak indirim araması (Amazon linki = komisyon)
+DEALS_PER_RUN = _int("DEALS_PER_RUN", 1)  # her turda bakılacak indirim araması (Amazon linki = komisyon)
 KEYWORDS_PER_RUN = _int("KEYWORDS_PER_RUN", 9)  # her turda havuzdan rastgele bu kadar konu taranır
 USE_GOOGLE_TRENDS = _get("USE_GOOGLE_TRENDS", "1") == "1"
 TRENDS_GEO = _get("TRENDS_GEO", "US")
@@ -76,11 +76,22 @@ VIDEOS_PER_DAY = max(1, min(_int("VIDEOS_PER_DAY", 3), 6))  # YouTube API kotas�
 ACTIVE_START_HOUR = _int("ACTIVE_START_HOUR", 10)
 ACTIVE_END_HOUR = _int("ACTIVE_END_HOUR", 23)
 PRIVACY = _get("PRIVACY", "public")  # public / unlisted / private
-TARGET_SECONDS = _int("TARGET_SECONDS", 32)
+TARGET_SECONDS = _int("TARGET_SECONDS", 25)  # kısa Shorts sonuna kadar izlenir ve döngüye girer
 VOICE = _get("VOICE", "")
 TELEGRAM_BOT_TOKEN = _get("TELEGRAM_BOT_TOKEN")   # TikTok için videoları telefona yollar (isteğe bağlı)
 TELEGRAM_CHAT_ID = _get("TELEGRAM_CHAT_ID")
 AMAZON_TAG = _get("AMAZON_TAG")                   # Amazon ortaklık (affiliate) kodu; boşsa link eklenmez
+# Her zaman izlenen "bilinmeyen gerçekler" videoları (Wikipedia'dan doğrulanmış): turların bu oranı
+EVERGREEN_SHARE = float(_get("EVERGREEN_SHARE", "0.4") or 0.4)
+EVERGREEN_GAMES = [g.strip() for g in _get("EVERGREEN_GAMES",
+    "Minecraft|Grand Theft Auto V|Fortnite|Roblox|Pokémon (video game series)|The Legend of Zelda: Breath of the Wild|"
+    "Elden Ring|Call of Duty|Super Mario Bros.|Red Dead Redemption 2|The Witcher 3: Wild Hunt|Among Us|Tetris|"
+    "Halo (franchise)|God of War (2018 video game)|Cyberpunk 2077|The Elder Scrolls V: Skyrim|Clash of Clans|"
+    "PUBG: Battlegrounds|League of Legends|Valorant|Hollow Knight|Five Nights at Freddy's|Sonic the Hedgehog|"
+    "Pac-Man|The Last of Us|Resident Evil 4|Dark Souls|Free Fire (video game)|Mobile Legends: Bang Bang|"
+    "Genshin Impact|Grand Theft Auto: San Andreas|Super Smash Bros. Ultimate|Animal Crossing: New Horizons|"
+    "Half-Life 2|Portal 2|Doom (1993 video game)|Counter-Strike 2|Terraria|Stardew Valley|Undertale|"
+    "Metal Gear Solid|Street Fighter II|Mortal Kombat|PlayStation 2|Game Boy|Nintendo Switch|Xbox 360").split("|") if g.strip()]
 LONG_MINUTES = _int("LONG_MINUTES", 9)   # haftalık uzun video hedef süresi (dakika)
 AI_IMAGES = _get("AI_IMAGES", "1") == "1"  # Pollinations.ai ile yapay zekâ sahne görselleri (ücretsiz)
 MUSIC_VOLUME = float(_get("MUSIC_VOLUME", "0.10") or 0.10)
