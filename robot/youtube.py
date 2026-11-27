@@ -296,3 +296,30 @@ def set_thumbnail(video_id, image_path):
     except Exception as e:
         log.warning(f"Kapak resmi hatası: {e}")
     return False
+
+
+def most_popular(regions, categories=("20", "28"), per=25):
+    """YouTube'da ŞU AN en çok izlenen oyun (20) ve bilim-teknoloji (28) videoları; her çağrı 1 kota birimi."""
+    out, seen = [], set()
+    for region in regions:
+        for cat in categories:
+            try:
+                r = requests.get("https://www.googleapis.com/youtube/v3/videos", timeout=30,
+                                 headers={"Authorization": f"Bearer {_token()}"},
+                                 params={"part": "snippet,statistics", "chart": "mostPopular", "regionCode": region,
+                                         "videoCategoryId": cat, "maxResults": per})
+                items = r.json().get("items", []) if r.status_code == 200 else []
+            except Exception as e:
+                log.warning(f"YouTube popüler listesi alınamadı ({region}/{cat}): {e}")
+                continue
+            for it in items:
+                if it["id"] in seen:
+                    continue
+                seen.add(it["id"])
+                sn, stt = it.get("snippet", {}), it.get("statistics", {})
+                out.append({"title": sn.get("title", ""), "channel": sn.get("channelTitle", ""),
+                            "views": int(stt.get("viewCount", 0) or 0), "region": region,
+                            "tags": [t.lower() for t in (sn.get("tags") or [])][:15]})
+    out.sort(key=lambda v: -v["views"])
+    log.info(f"Piyasa radarı: YouTube'da en çok izlenen {len(out)} oyun/teknoloji videosu incelendi")
+    return out

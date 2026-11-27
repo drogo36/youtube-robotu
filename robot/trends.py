@@ -73,12 +73,53 @@ def google_trends():
     return out[:36]
 
 
+_MARKET = None
+
+
+def market():
+    """YouTube'un en çok izlenen listeleri (tur başına bir kez çekilir)."""
+    global _MARKET
+    if _MARKET is None:
+        try:
+            from . import youtube
+            regions = list(dict.fromkeys([config.TRENDS_GEO] + config.TRENDS_GEOS[:5]))
+            _MARKET = youtube.most_popular(regions)
+        except BaseException as e:
+            log.warning(f"Piyasa radarı çalışmadı: {e}")
+            _MARKET = []
+    return _MARKET
+
+
+def hot_names(names):
+    """Verilen oyun/marka adlarından, şu an YouTube'da en çok izlenen videolarda geçenler (izlenmeye göre sıralı)."""
+    score = {}
+    for v in market():
+        blob = (v["title"] + " " + " ".join(v["tags"])).lower()
+        for n in names:
+            short = n.split(" (")[0].split(":")[0].lower()
+            if len(short) >= 4 and short in blob:
+                score[n] = score.get(n, 0) + v["views"]
+    return [n for n, _ in sorted(score.items(), key=lambda x: -x[1])]
+
+
+def market_brief(limit=25):
+    vids = market()[:limit]
+    if not vids:
+        return ""
+    lines = "\n".join(f"  {v['views']:,} views [{v['region']}] {v['title']}" for v in vids)
+    return ("WHAT THE MARKET IS WATCHING: the most viewed gaming/tech videos on YouTube right now. Stories about the same "
+            "games, creators, events and topics have proven demand — strongly prefer them:\n" + lines + "\n")
+
+
 def collect():
     """Daha önce işlenmemiş haber adaylarını döndürür."""
     candidates, seen_links = [], set()
     import random
-    pool = list(config.WATCH_KEYWORDS)
-    first, rest = pool[:1], pool[1:]          # GTA 6 her turda bakılır, diğerleri dönüşümlü
+    hot = hot_names(config.WATCH_KEYWORDS + [g.split(" (")[0] for g in config.EVERGREEN_GAMES])[:4]
+    if hot:
+        log.info(f"Piyasada en çok izlenenler: {', '.join(hot)}")
+    pool = list(dict.fromkeys(hot + list(config.WATCH_KEYWORDS)))
+    first, rest = pool[:max(1, len(hot))], pool[max(1, len(hot)):]   # piyasada en çok izlenenler her turda bakılır
     random.shuffle(rest)
     deals = list(config.DEAL_KEYWORDS)
     random.shuffle(deals)
@@ -106,8 +147,10 @@ def evergreen_story():
     from datetime import datetime
     games = list(config.EVERGREEN_GAMES)
     random.shuffle(games)
+    hot = hot_names(games)[:6]          # YouTube'da şu an en çok izlenen oyunlar öne
+    games = hot + [g for g in games if g not in hot]
     week = datetime.now().strftime("%G-%V")
-    for game in games[:8]:
+    for game in games[:10]:
         key = f"wiki:{game}:{week}"
         if db.is_seen(key):
             continue

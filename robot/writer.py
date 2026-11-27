@@ -104,7 +104,8 @@ def choose_topic(candidates, trending, task=""):
     if task:
         brief += (f"\nTHE CHANNEL OWNER GAVE THIS ASSIGNMENT (top priority, may be in Turkish): {task}\n"
                   "Pick the story that best fulfils it. Only return -1 if nothing at all is related.\n")
-    perf = office.performance_brief()
+    from . import trends
+    perf = office.performance_brief() + trends.market_brief()
     prompt = f"""{brief}
 {perf}
 Pick the ONE story that will get the most views as a YouTube Short right now for a gaming/tech audience.
