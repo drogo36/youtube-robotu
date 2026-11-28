@@ -132,7 +132,7 @@ def main():
             office.daily_review()   # Kanal Müdürü: günde bir kez izlenmeleri inceler, stratejiyi günceller
         except Exception as e:
             print(f"Ofis toplantısı atlandı: {e}")
-        limit = 7 if os.environ.get("FORCE") == "1" else config.VIDEOS_PER_DAY  # elle çalıştırmada 2 ek video hakkı
+        limit = config.VIDEOS_PER_DAY + 2 if os.environ.get("FORCE") == "1" else config.VIDEOS_PER_DAY  # elle çalıştırmada 2 ek video hakkı
         if db.uploads_today() >= limit:
             print("Bugünün video kotası dolu, atlanıyor.")
             return
@@ -164,7 +164,7 @@ def main():
         from robot import youtube
         cid = youtube._client()["client_id"]
         root = config.ROOT / "veri" / "kanallar"
-        linked = {k: (root / k / "token.enc").exists() for k in ("es", "pt", "id")}
+        linked = {k: (root / k / "token.enc").exists() for k in ("es", "pt", "id", "tr")}
         (config.ROOT / "docs" / "kanal-config.json").write_text(
             json.dumps({"client_id": cid, "linked": linked}), encoding="utf-8")
         print("Kanal ayarı yazıldı:", linked)

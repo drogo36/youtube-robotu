@@ -7,6 +7,9 @@ on:
     - cron: "10 15 * * *"
     - cron: "30 19 * * *"
     - cron: "50 23 * * *"
+    # Ek turlar (günde 5 Short: daha çok deneme = algoritmanın bir videoyu patlatma şansı artar)
+    - cron: "10 11 * * *"   # Hindistan/Endonezya akşamı, Avrupa öğleden sonrası
+    - cron: "40 3 * * *"    # ABD batı yakası akşamı
     # Yedek turlar: GitHub bazen turu atlıyor; asıl tur çalıştıysa bunlar kendiliğinden boş geçer
     - cron: "40 16 * * *"
     - cron: "5 21 * * *"
@@ -50,7 +53,7 @@ jobs:
       GEMINI_MODEL: gemini-flash-lite-latest
       LANGUAGE: en
       CHANNEL_NAME: "@RespawnReportNews"
-      VIDEOS_PER_DAY: "3"
+      VIDEOS_PER_DAY: "5"
       PRIVACY: public
     steps:
       - uses: actions/checkout@v4

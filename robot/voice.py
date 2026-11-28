@@ -48,7 +48,7 @@ def _edge_chunked(text, voice, out_mp3):
         for attempt in range(1, 6):
             try:
                 async def _run():
-                    await asyncio.wait_for(edge_tts.Communicate(part, voice, rate="+6%").save(str(piece)), 120)
+                    await asyncio.wait_for(edge_tts.Communicate(part, voice, rate="+12%").save(str(piece)), 120)
                 asyncio.run(_run())
                 if piece.exists() and piece.stat().st_size > 500:
                     break
