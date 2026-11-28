@@ -1,17 +1,8 @@
 {
  "strategy": {
   "summary_tr": "Switch 2, GTA 6 donanım etkileri ve OLED monitör indirimleri yüksek izlenme alırken, yalın ve detaysız fiyat duyuruları zayıf kaldı. İzleyicilerin bağ kurabileceği, haber ve fırsatı harmanlayan dinamik formatlar kanalın performansını yukarı taşıyor.",
-  "decisions_tr": [
-   "Sadece kuru fiyat veren videolar yerine '3things' ve 'breaking' formatlarında oyuncuya sağladığı faydayı öne çıkaran kurgular yapacağız.",
-   "GTA 6'nın konsol kıtlığı ve donanım talebi üzerindeki etkilerini işlemeye devam edeceğiz.",
-   "Nintendo Switch 2 sızıntılarını ve olası fiyat detaylarını güçlü kancalarla sunacağız."
-  ],
-  "focus": [
-   "Nintendo Switch 2",
-   "GTA 6 Donanım Etkisi",
-   "OLED Monitörler",
-   "PC Gaming Donanımları"
-  ],
+  "decisions_tr": [],
+  "focus": [],
   "avoid": [
    "İçerik derinliği olmayan tekil ürün fiyat duyuruları",
    "Aşırı spekülatif, kanıtsız başlıklar"
@@ -29,7 +20,7 @@
    "Başlıklarda net rakamlar ve para birimi kullanarak güven ver.",
    "Emoji kullanımını başlığın sonunda tek bir simgeyle sınırlandır."
   ],
-  "date": "2026-11-28T02:24"
+  "date": "2026-11-01T00:00"
  },
  "videos": [
   {
